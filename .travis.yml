@@ -1,9 +1,9 @@
 language: rust
-rust:
-  - stable
-  - beta
-  - nightly
 cache: cargo
+
+stages:
+  - lint
+  - test
 
 matrix:
   include:
@@ -12,6 +12,9 @@ matrix:
       before_script: rustup component add clippy
       script: cargo clippy -- -D warnings
     - stage: test
+      rust:
+        - beta
+        - nightly
       script:
         - cargo build --verbose --all
         - cargo test --verbose --all
