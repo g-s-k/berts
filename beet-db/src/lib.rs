@@ -1,18 +1,25 @@
+//! A library to read a [beets](https://github.com/beetbox/beets) music database.
+
 #![deny(clippy::pedantic)]
 
 use std::path::PathBuf;
 
+pub use rusqlite::Error;
+
 mod tests;
 
 macro_rules! def_sqlite_struct {
-    ( $name:ident [ $( $field:ident: $typ:ty $(; $func:ident)?, )* ] ) => {
+    ( $(#[$outer:meta])* $name:ident [ $( $(#[$inner:meta])* $field:ident: $typ:ty $(; $func:ident)?, )* ]
+    ) => {
+        $(#[$outer])*
         #[derive(Debug)]
         pub struct $name {
-            $( pub $field: $typ ),*
+            $( $(#[$inner])* pub $field: $typ ),*
         }
 
         impl $name {
             #[allow(unused_assignments)]
+            /// Bind the metadata for a single entry.
             pub fn from_row(db_row__: &::rusqlite::Row) -> Self {
                 let mut field_idx__ = 0;
 
@@ -28,16 +35,26 @@ macro_rules! def_sqlite_struct {
         }
     };
 
-    ( $name:ident $table:ident $fields:tt ) => {
+    ( $(#[$outer:meta])* $name:ident $table:ident $fields:tt ) => {
         def_sqlite_struct! {
+            $(#[$outer])*
             $name $fields
         }
 
+        def_sqlite_struct!{
+            $name stringify!($table)
+        }
+    };
+
+    ( $name:ident $table:expr ) => {
         impl $name {
+            #[doc = "Bind each of the entries in the `"]
+            #[doc = $table]
+            #[doc = "` table."]
             pub fn read_all(c: &::rusqlite::Connection) ->
                 ::std::result::Result<::std::vec::Vec<Self>, ::rusqlite::Error>
             {
-                let mut stmt = c.prepare(concat!("SELECT * FROM ", stringify!($table)))?;
+                let mut stmt = c.prepare(concat!("SELECT * FROM ", $table))?;
                 let rows = stmt.query_map(::rusqlite::NO_PARAMS, Self::from_row)?;
 
                 let mut v = ::std::vec::Vec::new();
@@ -66,8 +83,8 @@ fn optional_blob_to_path(v: Option<Vec<u8>>) -> Option<PathBuf> {
     v.map(blob_to_path)
 }
 
-// Is this needed?
 def_sqlite_struct! {
+    /// All of the fields present on an "attribute" in the beets schema.
     Attribute [
         id: u32,
         entity_id: u32,
@@ -77,8 +94,11 @@ def_sqlite_struct! {
 }
 
 def_sqlite_struct! {
+    /// All of the fields that an album has in the beets schema.
     Album albums [
         id: u32,
+        /// This is converted lossily - any invalid UTF-8 will be
+        /// [transcribed as the replacement character.](https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8_lossy)
         artpath: Option<PathBuf>; optional_blob_to_path,
         added: f64,
         albumartist: String,
@@ -113,8 +133,11 @@ def_sqlite_struct! {
 }
 
 def_sqlite_struct! {
+    /// All of the fields that an "item" (track) has in the beets schema.
     Item items [
         id: u32,
+        /// This is converted lossily - any invalid UTF-8 will be
+        /// [transcribed as the replacement character.](https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8_lossy)
         path: PathBuf; blob_to_path,
         album_id: Option<u32>,
         title: String,
