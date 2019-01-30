@@ -75,6 +75,7 @@ macro_rules! def_field {
     ( $defn:expr ) => { $defn };
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn blob_to_path(v: Vec<u8>) -> PathBuf {
     String::from(String::from_utf8_lossy(&v)).into()
 }
