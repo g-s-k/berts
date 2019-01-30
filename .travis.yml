@@ -5,21 +5,16 @@ rust:
   - nightly
 cache: cargo
 
-stages:
-  - name: lint
-    before_script: rustup component add clippy
-    script: cargo clippy -- -D warnings
-  - name: test
-    script:
-      - cargo build --verbose --all
-      - cargo test --verbose --all
-
 matrix:
-  exclude:
-    - rust: nightly
-      stage: lint
-    - rust: beta
-      stage: lint
+  include:
+    - stage: lint
+      rust: stable
+      before_script: rustup component add clippy
+      script: cargo clippy -- -D warnings
+    - stage: test
+      script:
+        - cargo build --verbose --all
+        - cargo test --verbose --all
   allow_failures:
     - rust: nightly
   fast_finish: true
