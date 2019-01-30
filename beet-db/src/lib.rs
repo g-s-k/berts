@@ -1,9 +1,11 @@
 #![deny(clippy::pedantic)]
 
+use std::path::PathBuf;
+
 mod tests;
 
 macro_rules! def_sqlite_struct {
-    ( $name:ident [ $( $field:ident: $typ:ty, )* ] ) => {
+    ( $name:ident [ $( $field:ident: $typ:ty $(; $func:ident)?, )* ] ) => {
         #[derive(Debug)]
         pub struct $name {
             $( pub $field: $typ ),*
@@ -15,7 +17,7 @@ macro_rules! def_sqlite_struct {
                 let mut field_idx__ = 0;
 
                 $(
-                    let $field = db_row__.get(field_idx__);
+                    let $field = def_field!(db_row__.get(field_idx__) $(, $func)?);
                     field_idx__ += 1;
                 )*
 
@@ -49,6 +51,21 @@ macro_rules! def_sqlite_struct {
     };
 }
 
+macro_rules! def_field {
+    ( $defn:expr, $func:ident ) => {
+        $func($defn)
+    };
+    ( $defn:expr ) => { $defn };
+}
+
+fn blob_to_path(v: Vec<u8>) -> PathBuf {
+    String::from(String::from_utf8_lossy(&v)).into()
+}
+
+fn optional_blob_to_path(v: Option<Vec<u8>>) -> Option<PathBuf> {
+    v.map(blob_to_path)
+}
+
 // Is this needed?
 def_sqlite_struct! {
     Attribute [
@@ -62,7 +79,7 @@ def_sqlite_struct! {
 def_sqlite_struct! {
     Album albums [
         id: u32,
-        artpath: Option<Vec<u8>>,
+        artpath: Option<PathBuf>; optional_blob_to_path,
         added: f64,
         albumartist: String,
         albumartist_sort: String,
@@ -98,7 +115,7 @@ def_sqlite_struct! {
 def_sqlite_struct! {
     Item items [
         id: u32,
-        path: Vec<u8>,
+        path: PathBuf; blob_to_path,
         album_id: Option<u32>,
         title: String,
         artist: String,
