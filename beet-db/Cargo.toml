@@ -1,8 +1,0 @@
-[package]
-name = "beet-db"
-version = "0.1.0"
-authors = ["George Kaplan <george@georgekaplan.xyz>"]
-edition = "2018"
-
-[dependencies]
-rusqlite = "0.16.0"
