@@ -1,3 +1,5 @@
+#![deny(clippy::pedantic)]
+
 macro_rules! def_sqlite_struct {
     ( $name:ident [ $( $field:ident: $typ:ty, )* ] ) => {
         #[derive(Debug)]
@@ -6,6 +8,7 @@ macro_rules! def_sqlite_struct {
         }
 
         impl $name {
+            #[allow(unused_assignments)]
             pub fn from_row(db_row__: &::rusqlite::Row) -> Self {
                 let mut field_idx__ = 0;
 
@@ -14,14 +17,13 @@ macro_rules! def_sqlite_struct {
                     field_idx__ += 1;
                 )*
 
-                drop(field_idx__);
-
                 Self {
                     $( $field ),*
                 }
             }
         }
     };
+
     ( $name:ident $table:ident $fields:tt ) => {
         def_sqlite_struct! {
             $name $fields
