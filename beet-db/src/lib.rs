@@ -1,5 +1,7 @@
 #![deny(clippy::pedantic)]
 
+mod tests;
+
 macro_rules! def_sqlite_struct {
     ( $name:ident [ $( $field:ident: $typ:ty, )* ] ) => {
         #[derive(Debug)]
@@ -30,7 +32,7 @@ macro_rules! def_sqlite_struct {
         }
 
         impl $name {
-            pub fn read_all(c: ::rusqlite::Connection) ->
+            pub fn read_all(c: &::rusqlite::Connection) ->
                 ::std::result::Result<::std::vec::Vec<Self>, ::rusqlite::Error>
             {
                 let mut stmt = c.prepare(concat!("SELECT * FROM ", stringify!($table)))?;
@@ -60,7 +62,7 @@ def_sqlite_struct! {
 def_sqlite_struct! {
     Album albums [
         id: u32,
-        artpath: String,
+        artpath: Option<Vec<u8>>,
         added: f64,
         albumartist: String,
         albumartist_sort: String,
@@ -84,8 +86,8 @@ def_sqlite_struct! {
         country: String,
         albumstatus: String,
         albumdisambig: String,
-        rg_album_gain: f64,
-        rg_album_peak: f64,
+        rg_album_gain: Option<f64>,
+        rg_album_peak: Option<f64>,
         r128_album_gain: u32,
         original_year: u16,
         original_month: u8,
@@ -96,8 +98,8 @@ def_sqlite_struct! {
 def_sqlite_struct! {
     Item items [
         id: u32,
-        path: String,
-        album_id: u32,
+        path: Vec<u8>,
+        album_id: Option<u32>,
         title: String,
         artist: String,
         artist_sort: String,
@@ -143,20 +145,20 @@ def_sqlite_struct! {
         albumdisambig: String,
         disctitle: String,
         encoder: String,
-        rg_track_gain: f64,
-        rg_track_peak: f64,
-        rg_album_gain: f64,
-        rg_album_peak: f64,
+        rg_track_gain: Option<f64>,
+        rg_track_peak: Option<f64>,
+        rg_album_gain: Option<f64>,
+        rg_album_peak: Option<f64>,
         r128_track_gain: u32,
         r128_album_gain: u32,
         original_year: u16,
         original_month: u8,
         original_day: u8,
-        initial_key: String,
+        initial_key: Option<String>,
         length: f64,
         bitrate: u32,
         format: String,
-        samplerate: u16,
+        samplerate: u32,
         bitdepth: u16,
         channels: u8,
         mtime: f64,
