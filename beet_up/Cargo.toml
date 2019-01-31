@@ -1,5 +1,9 @@
 [package]
-name = "server"
+name = "beet-up"
 version = "0.1.0"
 authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
+
+[dependencies]
+beet_db = { path = "../beet_db" }
+structopt = "0.2.14"
