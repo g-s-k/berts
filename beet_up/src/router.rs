@@ -4,7 +4,12 @@ use warp::{filters::BoxedFilter, path, Filter, Reply};
 
 pub fn router() -> BoxedFilter<(impl Reply,)> {
     let stats = path("stats").map(|| "library stats");
-    route_items().or(route_albums()).or(stats).boxed()
+    let fallback = warp::any().and(warp::fs::dir("static"));
+    route_items()
+        .or(route_albums())
+        .or(stats)
+        .or(fallback)
+        .boxed()
 }
 
 fn route_albums() -> BoxedFilter<(impl Reply,)> {
