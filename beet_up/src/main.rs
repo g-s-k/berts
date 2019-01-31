@@ -1,3 +1,5 @@
+#![deny(clippy::pedantic)]
+
 use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
 
