@@ -4,8 +4,11 @@ use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
 
 use structopt::StructOpt;
+use warp::Filter;
 
 mod router;
+
+const LOG_TARGET: &str = "beet_up::api";
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "beet-up")]
@@ -37,9 +40,11 @@ struct Cli {
 }
 
 fn main() {
+    pretty_env_logger::init();
     let cli = Cli::from_args();
+
     let addr = SocketAddr::new(cli.host, cli.port);
     println!("Now listening at http://{}.", addr);
 
-    warp::serve(router::router()).run(addr)
+    warp::serve(router::router().with(warp::log::log(LOG_TARGET))).run(addr)
 }
