@@ -2,9 +2,13 @@
 
 #![deny(clippy::pedantic)]
 
+#[macro_use]
+extern crate serde_derive;
+
 use std::path::PathBuf;
 
 pub use rusqlite::Error;
+use rusqlite::{Connection, OpenFlags};
 
 mod tests;
 
@@ -12,7 +16,7 @@ macro_rules! def_sqlite_struct {
     ( $(#[$outer:meta])* $name:ident [ $( $(#[$inner:meta])* $field:ident: $typ:ty $(; $func:ident)?, )* ]
     ) => {
         $(#[$outer])*
-        #[derive(Debug)]
+        #[derive(Clone, Debug, Serialize)]
         pub struct $name {
             $( $(#[$inner])* pub $field: $typ ),*
         }
@@ -72,7 +76,9 @@ macro_rules! def_field {
     ( $defn:expr, $func:ident ) => {
         $func($defn)
     };
-    ( $defn:expr ) => { $defn };
+    ( $defn:expr ) => {
+        $defn
+    };
 }
 
 #[allow(clippy::needless_pass_by_value)]
@@ -205,4 +211,9 @@ def_sqlite_struct! {
         mtime: f64,
         added: f64,
     ]
+}
+
+pub fn read_all(db_path: PathBuf) -> Result<(Vec<Album>, Vec<Item>), Error> {
+    let conn = Connection::open_with_flags(db_path, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+    Ok((Album::read_all(&conn)?, Item::read_all(&conn)?))
 }
