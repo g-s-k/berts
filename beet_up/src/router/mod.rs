@@ -2,19 +2,27 @@ use std::path::PathBuf;
 
 use warp::{filters::BoxedFilter, path, Filter, Reply};
 
-pub fn router() -> BoxedFilter<(impl Reply,)> {
+use super::Model;
+
+mod handlers;
+
+pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
     let stats = path("stats").map(|| "library stats");
     let fallback = warp::any().and(warp::fs::dir("static"));
-    route_items()
-        .or(route_albums())
+    route_items(model.clone())
+        .or(route_albums(model.clone()))
         .or(stats)
         .or(fallback)
         .boxed()
 }
 
-fn route_albums() -> BoxedFilter<(impl Reply,)> {
-    let get_all = path::end().map(|| "get all");
-    let get_by_id = path::param().map(|id: u32| format!("get the album with this id: {}", id));
+fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
+    let db = warp::any().map(move || model.clone());
+
+    let get_all = path::end().and(db.clone()).map(handlers::get_all_albums);
+    let get_by_id = path::param()
+        .and(db.clone())
+        .and_then(handlers::get_album_id);
     let get_by_ids = path::param().map(|ids: String| format!("get these album ids: {}", ids));
     let get_by_query = path("query")
         .and(path::param())
@@ -25,11 +33,14 @@ fn route_albums() -> BoxedFilter<(impl Reply,)> {
         .boxed()
 }
 
-fn route_items() -> BoxedFilter<(impl Reply,)> {
-    let get_all = path::end().map(|| "get all");
+fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
+    let db = warp::any().map(move || model.clone());
+
+    let get_all = path::end().and(db.clone()).map(handlers::get_all_items);
     let get_by_id = path!(u32)
         .and(path::end())
-        .map(|id| format!("get the track with this id: {}", id));
+        .and(db.clone())
+        .and_then(handlers::get_item_id);
     let get_file_by_id = path!(u32 / "file")
         .and(path::end())
         .map(|id| format!("get the file for track id {}", id));

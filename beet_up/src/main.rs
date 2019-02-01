@@ -2,13 +2,17 @@
 
 use std::net::{IpAddr, SocketAddr};
 use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
 
 use structopt::StructOpt;
 use warp::Filter;
 
+mod model;
 mod router;
 
 const LOG_TARGET: &str = "beet_up::api";
+
+type Model = Arc<Mutex<model::Model>>;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "beet-up")]
@@ -43,8 +47,11 @@ fn main() {
     pretty_env_logger::init();
     let cli = Cli::from_args();
 
+    let model = model::Model::new(cli.db_path);
+
     let addr = SocketAddr::new(cli.host, cli.port);
     println!("Now listening at http://{}.", addr);
 
-    warp::serve(router::router().with(warp::log::log(LOG_TARGET))).run(addr)
+    warp::serve(router::router(&Arc::new(Mutex::new(model))).with(warp::log::log(LOG_TARGET)))
+        .run(addr)
 }
