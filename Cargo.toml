@@ -1,2 +1,2 @@
 [workspace]
-members = [ "beet_db", "beet_up" ]
+members = [ "db", "query", "up" ]

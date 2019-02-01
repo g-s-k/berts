@@ -5,7 +5,7 @@ authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
 
 [dependencies]
-beet_db = { path = "../beet_db" }
+beet_db = { path = "../db" }
 structopt = "0.2.14"
 warp = "0.1.12"
 pretty_env_logger = "0.3.0"
