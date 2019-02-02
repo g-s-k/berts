@@ -1,0 +1,38 @@
+html,
+body,
+#app,
+.SplitPane {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  font-size: 16pt;
+  background-image: radial-gradient(circle at 20% 80%, #150000, black);
+}
+
+.SplitPane {
+  display: flex;
+}
+
+.SideNav {
+  width: 20rem;
+  padding: 0.5rem 1rem;
+}
+
+.Collection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(127, 127, 127, 0.15);
+}
+
+.ArtView {
+  height: 25rem;
+}
+
+.TrackList {
+  flex: 1;
+  border-top: 2px solid black;
+}
