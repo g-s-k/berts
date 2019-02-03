@@ -1,6 +1,9 @@
 (ns www.core
   (:require
-   [reagent.core :as r]))
+   ;; [cljs.core.async :refer [<!]] [cljs-http.client :as http]
+   [reagent.core :as r])
+  ;; (:require-macros [cljs.core.async.macros :refer [go]])
+  )
 
 ;; -------------------------
 ;; Views
@@ -36,4 +39,7 @@
   (r/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
+  ;; (go (let [response (<! (http/get "item"))]
+  ;;       (prn (:status response))
+  ;;       (prn (:body response))))
   (mount-root))
