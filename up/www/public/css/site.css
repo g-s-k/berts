@@ -8,8 +8,38 @@ body,
 }
 
 body {
-  font-size: 16pt;
+  font-size: 18pt;
+  font-family: Helvetica, sans-serif;
   background-image: radial-gradient(circle at 20% 80%, #150000, black);
+  color: snow;
+}
+
+div.input {
+  background-color: rgba(63, 63, 63, 0.3);
+  padding: 0.25rem 0.75rem 0.25rem 1rem;
+  border-radius: 1rem;
+  display: flex;
+}
+
+div.input > input {
+  width: 80%;
+  flex: 1 1 auto;
+  border: none;
+  background-color: transparent;
+  color: snow;
+  font-size: 18pt;
+}
+
+div.input > i {
+  align-self: center;
+  color: gray;
+  font-size: 16pt;
+  font-style: normal;
+  cursor: pointer;
+}
+
+div.input > i.active {
+  color: snow;
 }
 
 .SplitPane {
@@ -18,7 +48,7 @@ body {
 
 .SideNav {
   width: 20rem;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
 }
 
 .Collection {
