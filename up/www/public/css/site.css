@@ -42,12 +42,16 @@ div.input > i.active {
   color: snow;
 }
 
+table {
+  border-collapse: collapse;
+}
+
 .SplitPane {
   display: flex;
 }
 
 .SideNav {
-  width: 20rem;
+  flex: 0 0 20rem;
   padding: 1rem;
 }
 
@@ -55,14 +59,45 @@ div.input > i.active {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.ArtView,
+.TrackList {
   background-color: rgba(127, 127, 127, 0.15);
 }
 
 .ArtView {
-  height: 25rem;
+  flex: 0 0 15em;
+}
+
+.PaneDivider {
+  height: 0.25rem;
 }
 
 .TrackList {
   flex: 1;
-  border-top: 2px solid black;
+  padding: 0.5em 0;
+  overflow-y: auto;
+}
+
+.TrackList > table > thead {
+  text-align: left;
+}
+
+.TrackEntry {
+  line-height: 1.5em;
+}
+
+.TrackEntry > td:first-child,
+.TrackList > table > thead > tr > th:first-child {
+  padding-left: 0.5rem;
+}
+
+.TrackEntry > td:last-child,
+.TrackList > table > thead > tr > th:last-child {
+  padding-right: 1.5rem;
+}
+
+.TrackEntry:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.1);
 }

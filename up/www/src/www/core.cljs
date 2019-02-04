@@ -1,9 +1,13 @@
 (ns www.core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-   ;; [cljs.core.async :refer [<!]] [cljs-http.client :as http]
-   [reagent.core :as r])
-  ;; (:require-macros [cljs.core.async.macros :refer [go]])
-  )
+   [cljs-http.client :as http]
+   [cljs.core.async :refer [<!]]
+   [reagent.core :as r]))
+
+;; -------------------------
+;; Data
+(defonce items (r/atom []))
 
 ;; -------------------------
 ;; Views
@@ -22,14 +26,31 @@
 (defn art-view []
   [:div {:class "ArtView"}])
 
+(defn track-row [track]
+  [:tr {:key (:id track) :class "TrackEntry"}
+   [:td (:title track)]
+   [:td (:artist track)]
+   [:td (:album track)]
+   [:td (:year track)]])
+
 (defn track-table []
-  [:div {:class "TrackList"}])
+  [:div {:class "TrackList"}
+   [:table
+    [:thead
+     [:tr
+      [:th "Title"]
+      [:th "Artist"]
+      [:th "Album"]
+      [:th "Year"]]]
+    [:tbody (for [item @items]
+          (track-row item))]]])
 
 (defn home-page []
   [:div  {:class "SplitPane"}
    [nav-panel]
    [:div {:class "Collection"}
     [art-view]
+    [:div {:class "PaneDivider"}]
     [track-table]]])
 
 ;; -------------------------
@@ -39,7 +60,6 @@
   (r/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
-  ;; (go (let [response (<! (http/get "item"))]
-  ;;       (prn (:status response))
-  ;;       (prn (:body response))))
+  (go (let [response (<! (http/get "item"))]
+        (reset! items (:body response))))
   (mount-root))
