@@ -16,9 +16,11 @@ matrix:
       before_script: rustup component add clippy
       script: cargo clippy -- -D warnings
     - stage: test
+      before_script: which cargo-web || cargo install cargo-web
       script:
-        - cargo build --verbose --all
-        - cargo test --verbose --all
+        - cargo build --verbose
+        - cargo test --verbose
+        - cargo web deploy -p beet-up-www
   allow_failures:
     - rust: nightly
   fast_finish: true

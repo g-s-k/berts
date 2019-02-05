@@ -1,2 +1,3 @@
 [workspace]
 members = [ "db", "query", "up", "up/www" ]
+default-members = [ "db", "query", "up" ]

@@ -1,8 +1,9 @@
 [package]
-name = "www"
+name = "beet-up-www"
 version = "0.1.0"
 authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
+publish = false
 
 [dependencies]
 stdweb = "0.4.13"
