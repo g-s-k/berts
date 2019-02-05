@@ -36,6 +36,8 @@ div.input > i {
   font-size: 16pt;
   font-style: normal;
   cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
 }
 
 div.input > i.active {

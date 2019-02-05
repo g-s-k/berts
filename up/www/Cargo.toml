@@ -1,0 +1,9 @@
+[package]
+name = "www"
+version = "0.1.0"
+authors = ["George Kaplan <george@georgekaplan.xyz>"]
+edition = "2018"
+
+[dependencies]
+stdweb = "0.4.13"
+yew = "0.5"
