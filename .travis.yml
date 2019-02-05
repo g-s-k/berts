@@ -14,7 +14,7 @@ matrix:
     - stage: lint
       rust: stable
       before_script: rustup component add clippy
-      script: cargo clippy -- -D warnings
+      script: cargo clippy --all --verbose -- -D warnings
     - stage: test
       before_script: which cargo-web || cargo install cargo-web
       script:
