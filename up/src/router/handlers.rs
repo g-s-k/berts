@@ -17,6 +17,19 @@ pub fn get_all_albums(model: Model) -> impl Reply {
     warp::reply::json(&album_list)
 }
 
+pub fn get_album_items_id(id: u32, qstr: String, model: Model) -> Result<impl Reply, Rejection> {
+    if qstr.trim() == "expand" {
+        let tracks = model.lock().unwrap().get_album_items_id(id);
+        if tracks.is_empty() {
+            Err(warp::reject::not_found())
+        } else {
+            Ok(warp::reply::json(&tracks))
+        }
+    } else {
+        Err(warp::reject::not_found())
+    }
+}
+
 pub fn get_album_id(id: u32, model: Model) -> Result<impl Reply, Rejection> {
     match model.lock().unwrap().get_album_id(id) {
         Some(album) => Ok(warp::reply::json(&album)),

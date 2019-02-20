@@ -34,6 +34,17 @@ impl Model {
         self.albums.clone()
     }
 
+    pub fn get_album_items_id(&self, id: u32) -> Vec<Item> {
+        self.items
+            .iter()
+            .filter(|Item { album_id, .. }| match &album_id {
+                Some(i) if *i == id => true,
+                _ => false,
+            })
+            .cloned()
+            .collect()
+    }
+
     pub fn get_album_id(&self, id: u32) -> Option<Album> {
         self.albums.iter().find(|a| a.id == id).cloned()
     }
