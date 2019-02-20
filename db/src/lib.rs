@@ -90,6 +90,10 @@ fn optional_blob_to_path(v: Option<Vec<u8>>) -> Option<PathBuf> {
     v.map(blob_to_path)
 }
 
+fn is_num_zero<T: Default + PartialEq>(n: &T) -> bool {
+    n == &T::default()
+}
+
 def_sqlite_struct! {
     /// All of the fields present on an "attribute" in the beets schema.
     Attribute [
@@ -107,34 +111,60 @@ def_sqlite_struct! {
         /// This is converted lossily - any invalid UTF-8 will be
         /// [transcribed as the replacement character.](https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8_lossy)
         artpath: Option<PathBuf>; optional_blob_to_path,
+        #[serde(skip)]
         added: f64,
         albumartist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_sort: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_credit: String,
         album: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         genre: String,
+        #[serde(skip_serializing_if = "is_num_zero")]
         year: u16,
+        #[serde(skip_serializing_if = "is_num_zero")]
         month: u8,
+        #[serde(skip_serializing_if = "is_num_zero")]
         day: u8,
+        #[serde(skip_serializing_if = "is_num_zero")]
         disctotal: u32,
         comp: bool,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_albumid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_albumartistid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumtype: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         label: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_releasegroupid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         asin: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         catalognum: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         script: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         language: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         country: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumstatus: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumdisambig: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_album_gain: Option<f64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_album_peak: Option<f64>,
+        #[serde(skip_serializing_if = "is_num_zero")]
         r128_album_gain: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_year: u16,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_month: u8,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_day: u8,
  ]
 }
@@ -156,13 +186,17 @@ def_sqlite_struct! {
         artist_credit: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         album: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumartist: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_sort: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_credit: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         genre: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         lyricist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         composer: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         composer_sort: String,
@@ -170,17 +204,25 @@ def_sqlite_struct! {
         arranger: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         grouping: String,
+        #[serde(skip_serializing_if = "is_num_zero")]
         year: u16,
+        #[serde(skip_serializing_if = "is_num_zero")]
         month: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         day: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         track: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         tracktotal: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         disc: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         disctotal: u32,
         #[serde(skip_serializing_if = "String::is_empty")]
         lyrics: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         comments: String,
+        #[serde(skip_serializing_if = "is_num_zero")]
         bpm: u32,
         comp: bool,
         #[serde(skip_serializing_if = "String::is_empty")]
@@ -193,7 +235,9 @@ def_sqlite_struct! {
         mb_albumartistid: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         mb_releasetrackid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumtype: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         label: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         acoustid_fingerprint: String,
@@ -201,15 +245,25 @@ def_sqlite_struct! {
         acoustid_id: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         mb_releasegroupid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         asin: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         catalognum: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         script: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         language: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         country: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumstatus: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         media: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumdisambig: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         disctitle: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         encoder: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         rg_track_gain: Option<f64>,
@@ -219,17 +273,28 @@ def_sqlite_struct! {
         rg_album_gain: Option<f64>,
         #[serde(skip_serializing_if = "Option::is_none")]
         rg_album_peak: Option<f64>,
+        #[serde(skip_serializing_if = "is_num_zero")]
         r128_track_gain: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         r128_album_gain: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_year: u16,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_month: u8,
+        #[serde(skip_serializing_if = "is_num_zero")]
         original_day: u8,
+        #[serde(skip_serializing_if = "Option::is_none")]
         initial_key: Option<String>,
         length: f64,
+        #[serde(skip_serializing_if = "is_num_zero")]
         bitrate: u32,
+        #[serde(skip_serializing_if = "String::is_empty")]
         format: String,
+        #[serde(skip_serializing_if = "is_num_zero")]
         samplerate: u32,
+        #[serde(skip_serializing_if = "is_num_zero")]
         bitdepth: u16,
+        #[serde(skip_serializing_if = "is_num_zero")]
         channels: u8,
         #[serde(skip)]
         mtime: f64,
