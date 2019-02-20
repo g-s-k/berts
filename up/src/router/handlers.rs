@@ -7,6 +7,11 @@ use warp::{http::Response, Rejection, Reply};
 
 use super::super::Model;
 
+pub fn get_stats(model: Model) -> impl Reply {
+    let lib_stats = model.lock().unwrap().get_stats();
+    warp::reply::json(&lib_stats)
+}
+
 pub fn get_all_albums(model: Model) -> impl Reply {
     let album_list = model.lock().unwrap().get_all_albums();
     warp::reply::json(&album_list)

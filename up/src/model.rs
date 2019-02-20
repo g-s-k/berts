@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
+use serde_derive::Serialize;
+
 use beet_db::{read_all, Album, Item};
 
 pub struct Model {
@@ -8,11 +10,24 @@ pub struct Model {
     items: Vec<Item>,
 }
 
+#[derive(Serialize)]
+pub struct Stats {
+    albums: usize,
+    items: usize,
+}
+
 impl Model {
     pub fn new(db_path: PathBuf) -> Self {
         let err_msg = format!("Could not read database at {:?}", db_path);
         let (albums, items) = read_all(db_path).expect(&err_msg);
         Self { albums, items }
+    }
+
+    pub fn get_stats(&self) -> Stats {
+        Stats {
+            albums: self.albums.len(),
+            items: self.items.len(),
+        }
     }
 
     pub fn get_all_albums(&self) -> Vec<Album> {

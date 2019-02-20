@@ -7,13 +7,17 @@ use super::Model;
 mod handlers;
 
 pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
-    let stats = path("stats").map(|| "library stats");
     let fallback = warp::any().and(warp::fs::dir("static"));
     route_items(model.clone())
         .or(route_albums(model.clone()))
-        .or(stats)
+        .or(route_stats(model.clone()))
         .or(fallback)
         .boxed()
+}
+
+fn route_stats(model: Model) -> BoxedFilter<(impl Reply,)> {
+    let db = warp::any().map(move || model.clone());
+    path("stats").and(db.clone()).map(handlers::get_stats).boxed()
 }
 
 fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
