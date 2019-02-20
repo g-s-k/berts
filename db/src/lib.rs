@@ -146,20 +146,29 @@ def_sqlite_struct! {
         /// This is converted lossily - any invalid UTF-8 will be
         /// [transcribed as the replacement character.](https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8_lossy)
         path: PathBuf; blob_to_path,
+        #[serde(skip_serializing_if = "Option::is_none")]
         album_id: Option<u32>,
         title: String,
         artist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         artist_sort: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         artist_credit: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         album: String,
         albumartist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_sort: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         albumartist_credit: String,
         genre: String,
         lyricist: String,
         composer: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         composer_sort: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         arranger: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         grouping: String,
         year: u16,
         month: u32,
@@ -168,19 +177,29 @@ def_sqlite_struct! {
         tracktotal: u32,
         disc: u32,
         disctotal: u32,
+        #[serde(skip_serializing_if = "String::is_empty")]
         lyrics: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         comments: String,
         bpm: u32,
         comp: bool,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_trackid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_albumid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_artistid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_albumartistid: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_releasetrackid: String,
         albumtype: String,
         label: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         acoustid_fingerprint: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         acoustid_id: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
         mb_releasegroupid: String,
         asin: String,
         catalognum: String,
@@ -192,9 +211,13 @@ def_sqlite_struct! {
         albumdisambig: String,
         disctitle: String,
         encoder: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_track_gain: Option<f64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_track_peak: Option<f64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_album_gain: Option<f64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         rg_album_peak: Option<f64>,
         r128_track_gain: u32,
         r128_album_gain: u32,
@@ -208,7 +231,9 @@ def_sqlite_struct! {
         samplerate: u32,
         bitdepth: u16,
         channels: u8,
+        #[serde(skip)]
         mtime: f64,
+        #[serde(skip)]
         added: f64,
     ]
 }
