@@ -27,3 +27,29 @@ pub fn get_item_id(id: u32, model: Model) -> Result<impl Reply, Rejection> {
         None => Err(warp::reject::not_found()),
     }
 }
+
+pub fn get_ids(ids: String) -> Result<Vec<u32>, Rejection> {
+    ids.split(',')
+        .map(|s| s.parse::<u32>().map_err(|_| warp::reject::not_found()))
+        .collect()
+}
+
+pub fn get_album_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection> {
+    let albums = model.lock().unwrap().get_album_ids(&ids);
+
+    if albums.is_empty() {
+        Err(warp::reject::not_found())
+    } else {
+        Ok(warp::reply::json(&albums))
+    }
+}
+
+pub fn get_item_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection> {
+    let items = model.lock().unwrap().get_item_ids(&ids);
+
+    if items.is_empty() {
+        Err(warp::reject::not_found())
+    } else {
+        Ok(warp::reply::json(&items))
+    }
+}

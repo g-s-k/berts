@@ -23,7 +23,10 @@ fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
     let get_by_id = path::param()
         .and(db.clone())
         .and_then(handlers::get_album_id);
-    let get_by_ids = path::param().map(|ids: String| format!("get these album ids: {}", ids));
+    let get_by_ids = path::param()
+        .and_then(handlers::get_ids)
+        .and(db.clone())
+        .and_then(handlers::get_album_ids);
     let get_by_query = path("query")
         .and(path::param())
         .map(|q: String| format!("get the results of this query: {:?}", q));
@@ -44,7 +47,11 @@ fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
     let get_file_by_id = path!(u32 / "file")
         .and(path::end())
         .map(|id| format!("get the file for track id {}", id));
-    let get_by_ids = path::param().map(|ids: String| format!("get these track ids: {}", ids));
+    let get_by_ids = path::param()
+        .and(path::end())
+        .and_then(handlers::get_ids)
+        .and(db.clone())
+        .and_then(handlers::get_item_ids);
     let get_by_path = path("path").and(path::tail()).map(|t: path::Tail| {
         format!(
             "get the track with this path: {:#?}",

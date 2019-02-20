@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 use beet_db::{read_all, Album, Item};
@@ -22,11 +23,29 @@ impl Model {
         self.albums.iter().find(|a| a.id == id).cloned()
     }
 
+    pub fn get_album_ids(&self, ids: &[u32]) -> Vec<Album> {
+        let s = ids.iter().collect::<HashSet<_>>();
+        self.albums
+            .iter()
+            .filter(|Album { id, .. }| s.contains(id))
+            .cloned()
+            .collect()
+    }
+
     pub fn get_all_items(&self) -> Vec<Item> {
         self.items.clone()
     }
 
     pub fn get_item_id(&self, id: u32) -> Option<Item> {
         self.items.iter().find(|i| i.id == id).cloned()
+    }
+
+    pub fn get_item_ids(&self, ids: &[u32]) -> Vec<Item> {
+        let s = ids.iter().collect::<HashSet<_>>();
+        self.items
+            .iter()
+            .filter(|Item { id, .. }| s.contains(id))
+            .cloned()
+            .collect()
     }
 }
