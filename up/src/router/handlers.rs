@@ -1,6 +1,9 @@
 #![allow(clippy::needless_pass_by_value)]
 
-use warp::{Rejection, Reply};
+use std::fs::File;
+use std::io::Read;
+
+use warp::{http::Response, Rejection, Reply};
 
 use super::super::Model;
 
@@ -51,5 +54,42 @@ pub fn get_item_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection
         Err(warp::reject::not_found())
     } else {
         Ok(warp::reply::json(&items))
+    }
+}
+
+pub fn get_item_file(id: u32, model: Model) -> Result<impl Reply, Rejection> {
+    match model.lock().unwrap().get_item_id(id) {
+        Some(beet_db::Item {
+            bitrate,
+            format,
+            length,
+            path,
+            ..
+        }) => {
+            let mut f = match File::open(path) {
+                Ok(f) => f,
+                Err(_) => return Err(warp::reject::not_found()),
+            };
+
+            #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+            let mut buffer = Vec::with_capacity(bitrate as usize * length as usize);
+            if f.read_to_end(&mut buffer).is_err() {
+                return Err(warp::reject::not_found());
+            }
+
+            Ok(Response::builder()
+                .header(
+                    "content-type",
+                    match format.as_ref() {
+                        "AIFF" => "audio/x-aiff",
+                        "FLAC" => "audio/flac",
+                        "MP3" => "audio/mpeg",
+                        "OGG" => "audio/ogg",
+                        _ => "application/octet-stream",
+                    },
+                )
+                .body(buffer))
+        }
+        None => Err(warp::reject::not_found()),
     }
 }

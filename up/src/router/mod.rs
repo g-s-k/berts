@@ -46,7 +46,8 @@ fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
         .and_then(handlers::get_item_id);
     let get_file_by_id = path!(u32 / "file")
         .and(path::end())
-        .map(|id| format!("get the file for track id {}", id));
+        .and(db.clone())
+        .and_then(handlers::get_item_file);
     let get_by_ids = path::param()
         .and(path::end())
         .and_then(handlers::get_ids)
