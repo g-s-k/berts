@@ -22,4 +22,4 @@ build-server:
 build: build-client build-server
 
 start: install-watch install-web
-	cargo watch -x 'web deploy -p beet-up-www' -x 'run -- ../db/tests/test.db'
+	cargo watch -w .. -x 'web deploy -p beet-up-www' -x 'run -- ../db/tests/test.db'
