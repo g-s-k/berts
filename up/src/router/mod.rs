@@ -3,7 +3,7 @@ use warp::{
     filters::BoxedFilter,
     http::StatusCode,
     path,
-    reply::{json, with_status},
+    reply::with_status,
     Filter, Rejection, Reply,
 };
 
@@ -35,7 +35,7 @@ fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
             Error::Sync => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
-        Ok(with_status(json(&err.to_string()), code))
+        Ok(with_status(err.to_string(), code))
     } else {
         Err(err)
     }
