@@ -12,12 +12,11 @@ use warp::{
 
 use beet_query::Query;
 
-use super::Error;
 use super::super::Model;
+use super::Error;
 
-
-fn req_err<T>(_: T) -> Rejection {
-    custom(Error::BadRequest)
+fn req_err<T>(msg: &'static str) -> impl FnOnce(T) -> Rejection {
+    move |_| custom(Error::BadRequest(msg))
 }
 
 fn sync_err<T>(_: T) -> Rejection {
@@ -68,7 +67,7 @@ pub fn get_album_art(id: u32, model: Model) -> Result<impl Reply, Rejection> {
                 utf8_percent_encode(&path.to_string_lossy(), DEFAULT_ENCODE_SET)
             )
             .parse::<Uri>()
-            .map_err(req_err)?,
+            .map_err(req_err("could not encode art path as a valid URI"))?,
         )),
         _ => Err(not_found()),
     }
@@ -92,7 +91,10 @@ pub fn get_item_id(id: u32, model: Model) -> Result<impl Reply, Rejection> {
 
 pub fn get_ids(ids: String) -> Result<Vec<u32>, Rejection> {
     ids.split(',')
-        .map(|s| s.parse::<u32>().map_err(req_err))
+        .map(|s| {
+            s.parse::<u32>()
+                .map_err(req_err("could not parse list of IDs from path"))
+        })
         .collect()
 }
 
@@ -117,7 +119,7 @@ pub fn get_item_path(path: warp::path::Tail, model: Model) -> Result<impl Reply,
         .get_item_path(&PathBuf::from(
             percent_decode(path.as_str().as_bytes())
                 .decode_utf8()
-                .map_err(req_err)?
+                .map_err(req_err("could not decode path to item"))?
                 .to_string(),
         ))
         .ok_or_else(not_found)
@@ -137,7 +139,7 @@ pub fn get_item_file(id: u32, model: Model) -> Result<impl Reply, Rejection> {
                     utf8_percent_encode(&path.to_string_lossy(), DEFAULT_ENCODE_SET)
                 )
                 .parse::<Uri>()
-                .map_err(req_err)?,
+                .map_err(req_err("could not encode item path as valid URI"))?,
             ))
         })
 }
@@ -145,15 +147,21 @@ pub fn get_item_file(id: u32, model: Model) -> Result<impl Reply, Rejection> {
 pub fn parse_query(q: String) -> Result<Query, Rejection> {
     percent_decode(q.as_bytes())
         .decode_utf8()
-        .map_err(req_err)?
+        .map_err(req_err("could not decode path"))?
         .parse()
-        .map_err(req_err)
+        .map_err(req_err("could not parse query from path"))
 }
 
 pub fn query_albums(q: Query, model: Model) -> Result<impl Reply, Rejection> {
-    model.lock().map_err(sync_err).map(|m| json(&m.query_albums(&q)))
+    model
+        .lock()
+        .map_err(sync_err)
+        .map(|m| json(&m.query_albums(&q)))
 }
 
 pub fn query_items(q: Query, model: Model) -> Result<impl Reply, Rejection> {
-    model.lock().map_err(sync_err).map(|m| json(&m.query_items(&q)))
+    model
+        .lock()
+        .map_err(sync_err)
+        .map(|m| json(&m.query_items(&q)))
 }

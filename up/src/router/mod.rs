@@ -13,14 +13,14 @@ mod handlers;
 
 #[derive(Copy, Clone, Debug)]
 pub enum Error {
-    BadRequest,
+    BadRequest(&'static str),
     Sync,
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::BadRequest => write!(f, "Bad request."),
+            Error::BadRequest(s) => write!(f, "Bad request: {}", s),
             Error::Sync => write!(f, "Could not acquire lock on data store."),
         }
     }
@@ -31,7 +31,7 @@ impl std::error::Error for Error {}
 fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
     if let Some(&err) = err.find_cause::<Error>() {
         let code = match err {
-            Error::BadRequest => StatusCode::BAD_REQUEST,
+            Error::BadRequest(_) => StatusCode::BAD_REQUEST,
             Error::Sync => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
