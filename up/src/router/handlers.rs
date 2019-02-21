@@ -113,3 +113,8 @@ pub fn parse_query(q: String) -> Result<Query, Rejection> {
         .parse()
         .map_err(|_| warp::reject::not_found())
 }
+
+pub fn query_items(q: Query, model: Model) -> impl Reply {
+    let items = model.lock().unwrap().query_items(q);
+    Ok(warp::reply::json(&items))
+}

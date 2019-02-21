@@ -112,6 +112,9 @@ dependencies = [
 [[package]]
 name = "beet_query"
 version = "0.1.0"
+dependencies = [
+ "beet_db 0.1.0",
+]
 
 [[package]]
 name = "bincode"

@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use serde_derive::Serialize;
 
 use beet_db::{read_all, Album, Item};
+use beet_query::Query;
 
 pub struct Model {
     albums: Vec<Album>,
@@ -71,6 +72,14 @@ impl Model {
         self.items
             .iter()
             .filter(|Item { id, .. }| s.contains(id))
+            .cloned()
+            .collect()
+    }
+
+    pub fn query_items(&self, q: Query) -> Vec<Item> {
+        self.items
+            .iter()
+            .filter(|item| q.match_item(item))
             .cloned()
             .collect()
     }

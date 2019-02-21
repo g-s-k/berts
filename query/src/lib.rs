@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use beet_db::Item;
+
 mod tests;
 
 #[derive(Debug)]
@@ -9,6 +11,12 @@ pub struct Error;
 pub struct Query {
     keys: KeyGroup,
     sort: Vec<Sort>,
+}
+
+impl Query {
+    pub fn match_item(&self, item: &Item) -> bool {
+        self.keys.match_item(item)
+    }
 }
 
 impl FromStr for Query {
@@ -59,6 +67,18 @@ struct KeyGroup {
     all: bool,
 }
 
+impl KeyGroup {
+    fn match_item(&self, item: &Item) -> bool {
+        let f = |key: &Keyword| key.match_item(item);
+
+        if self.all {
+            self.keys.iter().all(f)
+        } else {
+            self.keys.iter().any(f)
+        }
+    }
+}
+
 impl Default for KeyGroup {
     fn default() -> Self {
         Self {
@@ -76,6 +96,67 @@ struct Keyword {
     negated: bool,
 }
 
+impl Keyword {
+    fn match_item(&self, item: &Item) -> bool {
+        let year = format!("{}", item.year);
+        let month = format!("{}", item.month);
+        let day = format!("{}", item.day);
+        let track = format!("{}", item.track);
+        let tracktotal = format!("{}", item.tracktotal);
+        let disc = format!("{}", item.disc);
+        let disctotal = format!("{}", item.disctotal);
+        let bitrate = format!("{}", item.bitrate);
+
+        let txt = match self.field.as_ref().map(String::as_str) {
+            Some("title") => vec![&item.title],
+            Some("album") => vec![&item.album],
+            Some("artist") => vec![&item.artist, &item.artist_sort, &item.artist_credit],
+            Some("albumartist") => vec![
+                &item.albumartist,
+                &item.albumartist_sort,
+                &item.albumartist_credit,
+            ],
+            Some("genre") => vec![&item.genre],
+            Some("lyricist") => vec![&item.lyricist],
+            Some("composer") => vec![&item.composer, &item.composer_sort],
+            Some("arranger") => vec![&item.arranger],
+            Some("grouping") => vec![&item.grouping],
+            Some("year") => vec![&year],
+            Some("month") => vec![&month],
+            Some("day") => vec![&day],
+            Some("track") => vec![&track],
+            Some("tracktotal") => vec![&tracktotal],
+            Some("disc") => vec![&disc],
+            Some("disctotal") => vec![&disctotal],
+            Some("catalognum") => vec![&item.catalognum],
+            Some("format") => vec![&item.format],
+            Some("bitrate") => vec![&bitrate],
+            None => vec![
+                &item.title,
+                &item.album,
+                &item.artist,
+                &item.artist_sort,
+                &item.artist_credit,
+                &item.albumartist,
+                &item.albumartist_sort,
+                &item.albumartist_credit,
+                &item.genre,
+                &item.comments,
+            ],
+            _ => vec![],
+        };
+
+        self.negated != match self.key_type {
+            Type::Basic => {
+                let lower = self.text.to_lowercase();
+                txt.iter().any(|s| s.to_lowercase().contains(&lower))
+            }
+            Type::Path => unimplemented!(),
+            // _ => unreachable!(),
+        }
+    }
+}
+
 impl FromStr for Keyword {
     type Err = Error;
 
@@ -89,12 +170,12 @@ impl FromStr for Keyword {
         }
 
         if let Some(idx) = curr_str.find(':') {
-            curr_str = &curr_str[idx + 1..];
             match &curr_str[..idx] {
                 "path" => new.key_type = Type::Path,
                 // TODO: add regex support here
                 other => new.field = Some(other.to_string()),
             }
+            curr_str = &curr_str[idx + 1..];
         }
 
         // TODO: add num and date range support here

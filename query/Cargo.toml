@@ -5,3 +5,4 @@ authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
 
 [dependencies]
+beet_db = { path = "../db" }
