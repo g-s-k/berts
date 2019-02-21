@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use warp::{filters::BoxedFilter, path, Filter, Reply};
 
 use super::Model;
@@ -84,13 +82,10 @@ fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
         .and_then(handlers::get_ids)
         .and(db.clone())
         .and_then(handlers::get_item_ids);
-    // TODO: implement this
-    let get_by_path = path("path").and(path::tail()).map(|t: path::Tail| {
-        format!(
-            "get the track with this path: {:#?}",
-            PathBuf::from(t.as_str())
-        )
-    });
+    let get_by_path = path("path")
+        .and(path::tail())
+        .and(db.clone())
+        .and_then(handlers::get_item_path);
     let get_by_query = path("query")
         .and(path::param())
         .and(path::end())

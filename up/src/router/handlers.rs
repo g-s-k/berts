@@ -1,5 +1,7 @@
 #![allow(clippy::needless_pass_by_value)]
 
+use std::path::PathBuf;
+
 use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
 use warp::{http::Uri, Rejection, Reply};
 
@@ -89,6 +91,17 @@ pub fn get_item_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection
         Err(warp::reject::not_found())
     } else {
         Ok(warp::reply::json(&items))
+    }
+}
+
+pub fn get_item_path(path: warp::path::Tail, model: Model) -> Result<impl Reply, Rejection> {
+    let decoded = percent_decode(path.as_str().as_bytes())
+        .decode_utf8()
+        .map_err(|_| warp::reject::not_found())?
+        .to_string();
+    match model.lock().unwrap().get_item_path(PathBuf::from(decoded)) {
+        Some(item) => Ok(warp::reply::json(&item)),
+        None => Err(warp::reject::not_found()),
     }
 }
 

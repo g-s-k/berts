@@ -76,6 +76,10 @@ impl Model {
             .collect()
     }
 
+    pub fn get_item_path(&self, pth: PathBuf) -> Option<Item> {
+        self.items.iter().find(|Item {path, ..}| path == &pth).cloned()
+    }
+
     pub fn query_albums(&self, q: Query) -> Vec<Album> {
         self.albums
             .iter()
