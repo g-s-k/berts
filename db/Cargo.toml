@@ -9,6 +9,8 @@ readme = "./README.md"
 license = "MIT"
 
 [dependencies]
-rusqlite = "0.16.0"
 serde = "1.0.85"
 serde_derive = "1.0.85"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rusqlite = "0.16.0"
