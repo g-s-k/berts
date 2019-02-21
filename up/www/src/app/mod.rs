@@ -1,3 +1,4 @@
+use stdweb::{_js_impl, js};
 use yew::prelude::*;
 
 pub enum Msg {
@@ -21,7 +22,10 @@ impl Component for App {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Clear => self.query.clear(),
+            Msg::Clear => {
+                self.query.clear();
+                js! { document.getElementById("searchbar").focus() }
+            }
             Msg::Input(s) => self.query = s,
         }
 
@@ -36,6 +40,7 @@ impl Renderable<App> for App {
                 <div class="SideNav", >
                 <div class="input", >
                 <input
+                    id="searchbar",
                     placeholder="Enter query...",
                     oninput=|e| Msg::Input(e.value),
                     value=&self.query,
