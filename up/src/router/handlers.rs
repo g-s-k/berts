@@ -18,7 +18,7 @@ use super::Error;
 macro_rules! www_target {
     ($ext:expr) => {
         concat!(
-            "../../../target/wasm32-unknown-unknown/debug/beet-up-www.",
+            "../../../target/wasm32-unknown-unknown/release/beet-up-www.",
             $ext
         )
     };

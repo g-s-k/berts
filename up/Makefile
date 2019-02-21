@@ -14,7 +14,7 @@ ifndef CARGO_WEB_INSTALLED
 endif
 
 build-client: install-web
-	cargo web deploy -p beet-up-www
+	cargo web build --release -p beet-up-www
 
 build-server:
 	cargo build
@@ -22,4 +22,4 @@ build-server:
 build: build-client build-server
 
 start: install-watch install-web
-	cargo watch -w .. -x 'web deploy -p beet-up-www' -x 'run -- ../db/tests/test.db'
+	cargo watch -w .. -x 'web build --release -p beet-up-www' -x 'run -- ../db/tests/test.db'
