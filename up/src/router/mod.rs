@@ -19,14 +19,16 @@ fn route_stats(model: Model) -> BoxedFilter<(impl Reply,)> {
     let db = warp::any().map(move || model.clone());
     path("stats")
         .and(db.clone())
-        .map(handlers::get_stats)
+        .and_then(handlers::get_stats)
         .boxed()
 }
 
 fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
     let db = warp::any().map(move || model.clone());
 
-    let get_all = path::end().and(db.clone()).map(handlers::get_all_albums);
+    let get_all = path::end()
+        .and(db.clone())
+        .and_then(handlers::get_all_albums);
     let get_items_by_id = path::param()
         .and(path::end())
         .and(warp::query::raw())
@@ -51,7 +53,7 @@ fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
         .and(path::end())
         .and_then(handlers::parse_query)
         .and(db.clone())
-        .map(handlers::query_albums);
+        .and_then(handlers::query_albums);
 
     path("album")
         .and(
@@ -68,7 +70,9 @@ fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
 fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
     let db = warp::any().map(move || model.clone());
 
-    let get_all = path::end().and(db.clone()).map(handlers::get_all_items);
+    let get_all = path::end()
+        .and(db.clone())
+        .and_then(handlers::get_all_items);
     let get_by_id = path!(u32)
         .and(path::end())
         .and(db.clone())
@@ -91,7 +95,7 @@ fn route_items(model: Model) -> BoxedFilter<(impl Reply,)> {
         .and(path::end())
         .and_then(handlers::parse_query)
         .and(db.clone())
-        .map(handlers::query_items);
+        .and_then(handlers::query_items);
 
     path("item")
         .and(
