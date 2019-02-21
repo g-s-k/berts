@@ -48,12 +48,12 @@ fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
         .and_then(handlers::get_ids)
         .and(db.clone())
         .and_then(handlers::get_album_ids);
-    // TODO: search database with queries
     let get_by_query = path("query")
         .and(path::param())
         .and(path::end())
         .and_then(handlers::parse_query)
-        .map(|q| format!("get the results of this query: {:#?}", q));
+        .and(db.clone())
+        .map(handlers::query_albums);
 
     path("album")
         .and(

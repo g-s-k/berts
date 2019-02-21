@@ -76,6 +76,14 @@ impl Model {
             .collect()
     }
 
+    pub fn query_albums(&self, q: Query) -> Vec<Album> {
+        self.albums
+            .iter()
+            .filter(|album| q.match_album(album))
+            .cloned()
+            .collect()
+    }
+
     pub fn query_items(&self, q: Query) -> Vec<Item> {
         self.items
             .iter()

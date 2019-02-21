@@ -114,6 +114,11 @@ pub fn parse_query(q: String) -> Result<Query, Rejection> {
         .map_err(|_| warp::reject::not_found())
 }
 
+pub fn query_albums(q: Query, model: Model) -> impl Reply {
+    let albums = model.lock().unwrap().query_albums(q);
+    Ok(warp::reply::json(&albums))
+}
+
 pub fn query_items(q: Query, model: Model) -> impl Reply {
     let items = model.lock().unwrap().query_items(q);
     Ok(warp::reply::json(&items))

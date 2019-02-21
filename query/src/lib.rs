@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use beet_db::Item;
+use beet_db::{Album, Item};
 
 mod tests;
 
@@ -14,6 +14,10 @@ pub struct Query {
 }
 
 impl Query {
+    pub fn match_album(&self, album: &Album) -> bool {
+        self.keys.match_album(album)
+    }
+
     pub fn match_item(&self, item: &Item) -> bool {
         self.keys.match_item(item)
     }
@@ -68,6 +72,16 @@ struct KeyGroup {
 }
 
 impl KeyGroup {
+    fn match_album(&self, album: &Album) -> bool {
+        let f = |key: &Keyword| key.match_album(album);
+
+        if self.all {
+            self.keys.iter().all(f)
+        } else {
+            self.keys.iter().any(f)
+        }
+    }
+
     fn match_item(&self, item: &Item) -> bool {
         let f = |key: &Keyword| key.match_item(item);
 
@@ -97,6 +111,45 @@ struct Keyword {
 }
 
 impl Keyword {
+    fn match_album(&self, album: &Album) -> bool {
+        let year = format!("{}", album.year);
+        let month = format!("{}", album.month);
+        let day = format!("{}", album.day);
+        let disctotal = format!("{}", album.disctotal);
+
+        let txt = match self.field.as_ref().map(String::as_str) {
+            Some("album") => vec![&album.album, &album.albumdisambig],
+            Some("albumartist") => vec![
+                &album.albumartist,
+                &album.albumartist_sort,
+                &album.albumartist_credit,
+            ],
+            Some("genre") => vec![&album.genre],
+            Some("year") => vec![&year],
+            Some("month") => vec![&month],
+            Some("day") => vec![&day],
+            Some("disctotal") => vec![&disctotal],
+            Some("catalognum") => vec![&album.catalognum],
+            None => vec![
+                &album.album,
+                &album.albumartist,
+                &album.albumartist_sort,
+                &album.albumartist_credit,
+                &album.genre,
+            ],
+            _ => vec![],
+        };
+
+        self.negated != match self.key_type {
+            Type::Basic => {
+                let lower = self.text.to_lowercase();
+                txt.iter().any(|s| s.to_lowercase().contains(&lower))
+            }
+            Type::Path => unimplemented!(),
+            // _ => unreachable!(),
+        }
+    }
+
     fn match_item(&self, item: &Item) -> bool {
         let year = format!("{}", item.year);
         let month = format!("{}", item.month);
