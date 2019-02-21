@@ -1,7 +1,9 @@
 #![allow(clippy::needless_pass_by_value)]
 
-use url::percent_encoding::{utf8_percent_encode, DEFAULT_ENCODE_SET};
+use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
 use warp::{http::Uri, Rejection, Reply};
+
+use beet_query::Query;
 
 use super::super::Model;
 
@@ -102,4 +104,12 @@ pub fn get_item_file(id: u32, model: Model) -> Result<impl Reply, Rejection> {
         )),
         None => Err(warp::reject::not_found()),
     }
+}
+
+pub fn parse_query(q: String) -> Result<Query, Rejection> {
+    percent_decode(q.as_bytes())
+        .decode_utf8()
+        .map_err(|_| warp::reject::not_found())?
+        .parse()
+        .map_err(|_| warp::reject::not_found())
 }
