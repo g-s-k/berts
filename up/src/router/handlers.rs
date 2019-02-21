@@ -4,9 +4,9 @@ use std::path::PathBuf;
 
 use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
 use warp::{
-    http::Uri,
+    http::{Response, Uri},
     reject::{custom, not_found},
-    reply::json,
+    reply::{html, json, with_header},
     Rejection, Reply,
 };
 
@@ -15,12 +15,51 @@ use beet_query::Query;
 use super::super::Model;
 use super::Error;
 
+macro_rules! www_target {
+    ($ext:expr) => {
+        concat!(
+            "../../../target/wasm32-unknown-unknown/debug/beet-up-www.",
+            $ext
+        )
+    };
+}
+
+macro_rules! static_file {
+    ($ext:expr) => {
+        concat!("../static/", $ext)
+    };
+}
+
 fn req_err<T>(msg: &'static str) -> impl FnOnce(T) -> Rejection {
     move |_| custom(Error::BadRequest(msg))
 }
 
 fn sync_err<T>(_: T) -> Rejection {
     custom(Error::Sync)
+}
+
+pub fn get_index() -> impl Reply {
+    html(format!(
+        include_str!(static_file!("index.html")),
+        styles = include_str!(static_file!("styles.css")),
+        script = include_str!(www_target!("js"))
+    ))
+}
+
+pub fn get_wasm() -> impl Reply {
+    with_header(
+        Response::new(&include_bytes!(www_target!("wasm"))[..]),
+        "content-type",
+        "application/wasm",
+    )
+}
+
+pub fn get_icon() -> impl Reply {
+    with_header(
+        Response::new(&include_bytes!(static_file!("beet.ico"))[..]),
+        "content-type",
+        "image/x-icon",
+    )
 }
 
 pub fn get_stats(model: Model) -> Result<impl Reply, Rejection> {

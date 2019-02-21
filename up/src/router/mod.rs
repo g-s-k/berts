@@ -43,13 +43,19 @@ fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
 
 pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
     let files = path("file").and(warp::fs::dir("/"));
-    let fallback = warp::any().and(warp::fs::dir("static"));
-    route_items(model.clone())
+    route_static()
+        .or(route_items(model.clone()))
         .or(route_albums(model.clone()))
         .or(route_stats(model.clone()))
         .or(files)
-        .or(fallback)
         .recover(customize_error)
+        .boxed()
+}
+
+fn route_static() -> BoxedFilter<(impl Reply,)> {
+    path::end().map(handlers::get_index)
+        .or(path("beet-up-www.wasm").and(path::end()).map(handlers::get_wasm))
+        .or(path("favicon.ico").and(path::end()).map(handlers::get_icon))
         .boxed()
 }
 
