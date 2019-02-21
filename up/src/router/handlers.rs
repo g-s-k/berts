@@ -99,7 +99,7 @@ pub fn get_item_path(path: warp::path::Tail, model: Model) -> Result<impl Reply,
         .decode_utf8()
         .map_err(|_| warp::reject::not_found())?
         .to_string();
-    match model.lock().unwrap().get_item_path(PathBuf::from(decoded)) {
+    match model.lock().unwrap().get_item_path(&PathBuf::from(decoded)) {
         Some(item) => Ok(warp::reply::json(&item)),
         None => Err(warp::reject::not_found()),
     }
@@ -128,11 +128,11 @@ pub fn parse_query(q: String) -> Result<Query, Rejection> {
 }
 
 pub fn query_albums(q: Query, model: Model) -> impl Reply {
-    let albums = model.lock().unwrap().query_albums(q);
+    let albums = model.lock().unwrap().query_albums(&q);
     Ok(warp::reply::json(&albums))
 }
 
 pub fn query_items(q: Query, model: Model) -> impl Reply {
-    let items = model.lock().unwrap().query_items(q);
+    let items = model.lock().unwrap().query_items(&q);
     Ok(warp::reply::json(&items))
 }

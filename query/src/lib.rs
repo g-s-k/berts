@@ -140,14 +140,15 @@ impl Keyword {
             _ => vec![],
         };
 
-        self.negated != match self.key_type {
-            Type::Basic => {
-                let lower = self.text.to_lowercase();
-                txt.iter().any(|s| s.to_lowercase().contains(&lower))
+        self.negated
+            != match self.key_type {
+                Type::Basic => {
+                    let lower = self.text.to_lowercase();
+                    txt.iter().any(|s| s.to_lowercase().contains(&lower))
+                }
+                Type::Path => unimplemented!(),
+                // _ => unreachable!(),
             }
-            Type::Path => unimplemented!(),
-            // _ => unreachable!(),
-        }
     }
 
     fn match_item(&self, item: &Item) -> bool {
@@ -199,14 +200,15 @@ impl Keyword {
             _ => vec![],
         };
 
-        self.negated != match self.key_type {
-            Type::Basic => {
-                let lower = self.text.to_lowercase();
-                txt.iter().any(|s| s.to_lowercase().contains(&lower))
+        self.negated
+            != match self.key_type {
+                Type::Basic => {
+                    let lower = self.text.to_lowercase();
+                    txt.iter().any(|s| s.to_lowercase().contains(&lower))
+                }
+                Type::Path => unimplemented!(),
+                // _ => unreachable!(),
             }
-            Type::Path => unimplemented!(),
-            // _ => unreachable!(),
-        }
     }
 }
 

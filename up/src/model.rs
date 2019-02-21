@@ -76,11 +76,11 @@ impl Model {
             .collect()
     }
 
-    pub fn get_item_path(&self, pth: PathBuf) -> Option<Item> {
-        self.items.iter().find(|Item {path, ..}| path == &pth).cloned()
+    pub fn get_item_path(&self, pth: &PathBuf) -> Option<Item> {
+        self.items.iter().find(|Item {path, ..}| path == pth).cloned()
     }
 
-    pub fn query_albums(&self, q: Query) -> Vec<Album> {
+    pub fn query_albums(&self, q: &Query) -> Vec<Album> {
         self.albums
             .iter()
             .filter(|album| q.match_album(album))
@@ -88,7 +88,7 @@ impl Model {
             .collect()
     }
 
-    pub fn query_items(&self, q: Query) -> Vec<Item> {
+    pub fn query_items(&self, q: &Query) -> Vec<Item> {
         self.items
             .iter()
             .filter(|item| q.match_item(item))
