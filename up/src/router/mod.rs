@@ -7,10 +7,12 @@ use super::Model;
 mod handlers;
 
 pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
+    let files = path("file").and(warp::fs::dir("/"));
     let fallback = warp::any().and(warp::fs::dir("static"));
     route_items(model.clone())
         .or(route_albums(model.clone()))
         .or(route_stats(model.clone()))
+        .or(files)
         .or(fallback)
         .boxed()
 }
@@ -28,15 +30,21 @@ fn route_albums(model: Model) -> BoxedFilter<(impl Reply,)> {
 
     let get_all = path::end().and(db.clone()).map(handlers::get_all_albums);
     let get_items_by_id = path::param()
+        .and(path::end())
         .and(warp::query::raw())
         .and(db.clone())
         .and_then(handlers::get_album_items_id);
     let get_by_id = path::param()
+        .and(path::end())
         .and(db.clone())
         .and_then(handlers::get_album_id);
-    // TODO: implement this
-    let get_art_by_id = path!(u32 / "art").map(|id| format!("get album art for album id {}.", id));
+    let get_art_by_id = path::param()
+        .and(path("art"))
+        .and(path::end())
+        .and(db.clone())
+        .and_then(handlers::get_album_art);
     let get_by_ids = path::param()
+        .and(path::end())
         .and_then(handlers::get_ids)
         .and(db.clone())
         .and_then(handlers::get_album_ids);

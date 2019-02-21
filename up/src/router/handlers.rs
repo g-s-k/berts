@@ -1,9 +1,7 @@
 #![allow(clippy::needless_pass_by_value)]
 
-use std::fs::File;
-use std::io::Read;
-
-use warp::{http::Response, Rejection, Reply};
+use url::percent_encoding::{utf8_percent_encode, DEFAULT_ENCODE_SET};
+use warp::{http::Uri, Rejection, Reply};
 
 use super::super::Model;
 
@@ -34,6 +32,23 @@ pub fn get_album_id(id: u32, model: Model) -> Result<impl Reply, Rejection> {
     match model.lock().unwrap().get_album_id(id) {
         Some(album) => Ok(warp::reply::json(&album)),
         None => Err(warp::reject::not_found()),
+    }
+}
+
+pub fn get_album_art(id: u32, model: Model) -> Result<impl Reply, Rejection> {
+    match model.lock().unwrap().get_album_id(id) {
+        Some(beet_db::Album {
+            artpath: Some(path),
+            ..
+        }) => Ok(warp::redirect(
+            format!(
+                "/file/{}",
+                utf8_percent_encode(&path.to_string_lossy(), DEFAULT_ENCODE_SET)
+            )
+            .parse::<Uri>()
+            .unwrap(),
+        )),
+        _ => Err(warp::reject::not_found()),
     }
 }
 
@@ -77,37 +92,14 @@ pub fn get_item_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection
 
 pub fn get_item_file(id: u32, model: Model) -> Result<impl Reply, Rejection> {
     match model.lock().unwrap().get_item_id(id) {
-        Some(beet_db::Item {
-            bitrate,
-            format,
-            length,
-            path,
-            ..
-        }) => {
-            let mut f = match File::open(path) {
-                Ok(f) => f,
-                Err(_) => return Err(warp::reject::not_found()),
-            };
-
-            #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
-            let mut buffer = Vec::with_capacity(bitrate as usize * length as usize);
-            if f.read_to_end(&mut buffer).is_err() {
-                return Err(warp::reject::not_found());
-            }
-
-            Ok(Response::builder()
-                .header(
-                    "content-type",
-                    match format.as_ref() {
-                        "AIFF" => "audio/x-aiff",
-                        "FLAC" => "audio/flac",
-                        "MP3" => "audio/mpeg",
-                        "OGG" => "audio/ogg",
-                        _ => "application/octet-stream",
-                    },
-                )
-                .body(buffer))
-        }
+        Some(beet_db::Item { path, .. }) => Ok(warp::redirect(
+            format!(
+                "/file/{}",
+                utf8_percent_encode(&path.to_string_lossy(), DEFAULT_ENCODE_SET)
+            )
+            .parse::<Uri>()
+            .unwrap(),
+        )),
         None => Err(warp::reject::not_found()),
     }
 }
