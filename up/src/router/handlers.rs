@@ -1,6 +1,5 @@
 #![allow(clippy::needless_pass_by_value)]
 
-use std::fmt;
 use std::path::PathBuf;
 
 use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
@@ -13,24 +12,9 @@ use warp::{
 
 use beet_query::Query;
 
+use super::Error;
 use super::super::Model;
 
-#[derive(Debug)]
-pub enum Error {
-    BadRequest,
-    Sync,
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::BadRequest => write!(f, "Bad request."),
-            Error::Sync => write!(f, "Could not acquire lock on data store."),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
 
 fn req_err<T>(_: T) -> Rejection {
     custom(Error::BadRequest)

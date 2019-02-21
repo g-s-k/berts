@@ -1,8 +1,45 @@
-use warp::{filters::BoxedFilter, path, Filter, Reply};
+use std::fmt;
+use warp::{
+    filters::BoxedFilter,
+    http::StatusCode,
+    path,
+    reply::{json, with_status},
+    Filter, Rejection, Reply,
+};
 
 use super::Model;
 
 mod handlers;
+
+#[derive(Copy, Clone, Debug)]
+pub enum Error {
+    BadRequest,
+    Sync,
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::BadRequest => write!(f, "Bad request."),
+            Error::Sync => write!(f, "Could not acquire lock on data store."),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
+fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
+    if let Some(&err) = err.find_cause::<Error>() {
+        let code = match err {
+            Error::BadRequest => StatusCode::BAD_REQUEST,
+            Error::Sync => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+
+        Ok(with_status(json(&err.to_string()), code))
+    } else {
+        Err(err)
+    }
+}
 
 pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
     let files = path("file").and(warp::fs::dir("/"));
@@ -12,6 +49,7 @@ pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
         .or(route_stats(model.clone()))
         .or(files)
         .or(fallback)
+        .recover(customize_error)
         .boxed()
 }
 
