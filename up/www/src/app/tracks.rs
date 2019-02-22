@@ -40,6 +40,7 @@ impl Renderable<TrackList> for TrackList {
                     <td>{ &item.title }</td>
                     <td>{ &item.artist }</td>
                     <td>{ &item.album }</td>
+                    <td>{ &item.genre }</td>
                     <td>{ &item.year }</td>
                 </tr>
             }
@@ -52,14 +53,15 @@ impl Renderable<TrackList> for TrackList {
                 </div>
             }
         } else {
-            html!{
+            html! {
                 <table>
                     <thead>
                         <tr>
-                            <th>{ "Title" }</th>
-                            <th>{ "Artist" }</th>
-                            <th>{ "Album" }</th>
-                            <th>{ "Year" }</th>
+                            <th class="row-title", >{ "Title" }</th>
+                            <th class="row-artist", >{ "Artist" }</th>
+                            <th class="row-album", >{ "Album" }</th>
+                            <th class="row-genre", >{ "Genre" }</th>
+                            <th class="row-year", >{ "Year" }</th>
                         </tr>
                     </thead>
                     <tbody>

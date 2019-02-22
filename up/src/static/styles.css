@@ -122,6 +122,9 @@ table {
 .TrackList > table {
   font-family: monospace;
   font-size: 0.8em;
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
 }
 
 .TrackList > table > thead {
@@ -130,6 +133,13 @@ table {
 
 .TrackEntry {
   line-height: 1.5em;
+}
+
+.TrackEntry > td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 0.5rem;
 }
 
 .TrackEntry > td:first-child,
@@ -144,4 +154,20 @@ table {
 
 .TrackEntry:nth-child(odd) {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.row-title {
+  width: 100%;
+}
+
+.row-artist, .row-album {
+  width: 20rem;
+}
+
+.row-genre {
+  width: 15rem;
+}
+
+.row-year {
+  width: 3rem;
 }
