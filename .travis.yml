@@ -13,14 +13,17 @@ matrix:
   include:
     - stage: lint
       rust: stable
-      before_script: rustup component add clippy
+      before_script:
+        - rustup component add clippy
+        - mkdir -p target/wasm32-unknown-unknown/release
+        - touch target/wasm32-unknown-unknown/release/beet-up-www.js target/wasm32-unknown-unknown/release/beet-up-www.wasm
       script: cargo clippy --all --verbose -- -D warnings
     - stage: test
       before_script: which cargo-web || cargo install cargo-web
       script:
+        - cargo web build --release -p beet-up-www
         - cargo build --verbose
         - cargo test --verbose
-        - cargo web deploy -p beet-up-www
   allow_failures:
     - rust: nightly
   fast_finish: true
