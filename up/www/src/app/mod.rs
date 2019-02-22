@@ -106,7 +106,7 @@ impl Renderable<App> for App {
             html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
         } else {
             html! { <ul class="FilterList", >
-                     </ul> }
+            </ul> }
         };
 
         html! {
@@ -127,7 +127,7 @@ impl Renderable<App> for App {
                     <div class="ArtView", >
                     </div>
                     <div class="PaneDivider", />
-                    <TrackList: items={ &self.items }, />
+                    <TrackList: is_fetching={ !self.fetch_tasks.is_empty() }, items={ &self.items }, />
                 </div>
             </div>
         }

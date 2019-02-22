@@ -110,6 +110,20 @@ table {
   overflow-y: auto;
 }
 
+.TrackList > .EmptyTrackList {
+  color: rgba(255, 255, 255, 0.6);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.TrackList > table {
+  font-family: monospace;
+  font-size: 0.8em;
+}
+
 .TrackList > table > thead {
   text-align: left;
 }
