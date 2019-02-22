@@ -18,7 +18,7 @@ macro_rules! def_sqlite_struct {
     ( $(#[$outer:meta])* $name:ident [ $( $(#[$inner:meta])* $field:ident: $typ:ty $(; $func:ident)?, )* ]
     ) => {
         $(#[$outer])*
-        #[derive(Clone, Debug, Deserialize, Serialize)]
+        #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
         pub struct $name {
             $( $(#[$inner])* pub $field: $typ ),*
         }

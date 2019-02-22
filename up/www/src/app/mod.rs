@@ -9,6 +9,10 @@ use yew::services::{
 
 use beet_db::{Album, Item};
 
+mod tracks;
+
+use tracks::TrackList;
+
 pub enum Msg {
     Input(String),
     Clear,
@@ -98,16 +102,6 @@ impl Component for App {
 
 impl Renderable<App> for App {
     fn view(&self) -> Html<Self> {
-        let track_list = self.items.iter().map(|item| {
-            html! {
-                <tr>
-                    <td>{ &item.title }</td>
-                    <td>{ &item.artist }</td>
-                    <td>{ &item.album }</td>
-                </tr>
-            }
-        });
-
         let filter_list = if self.query.is_empty() {
             html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
         } else {
@@ -133,13 +127,7 @@ impl Renderable<App> for App {
                     <div class="ArtView", >
                     </div>
                     <div class="PaneDivider", />
-                    <div class="TrackList", >
-                        <table>
-                            <tbody>
-                                { for track_list }
-                            </tbody>
-                        </table>
-                    </div>
+                    <TrackList: items={ &self.items }, />
                 </div>
             </div>
         }
