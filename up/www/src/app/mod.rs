@@ -8,6 +8,7 @@ use yew::services::{
 };
 
 use beet_db::{Album, Item};
+use beet_query::Query;
 
 mod tracks;
 
@@ -105,8 +106,60 @@ impl Renderable<App> for App {
         let filter_list = if self.query.is_empty() {
             html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
         } else {
-            html! { <ul class="FilterList", >
-            </ul> }
+            let q = self.query.parse::<Query>().unwrap();
+
+            let mut filtered_albums = self
+                .albums
+                .iter()
+                .filter(|album| q.match_album(album))
+                .take(15)
+                .peekable();
+
+            let album_list = if filtered_albums.peek().is_none() {
+                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
+            } else {
+                html! {
+                    <>
+                    { for filtered_albums
+                      .map(|album| {
+                          html! {
+                              <li><span>{ &album.album }</span></li>
+                          }
+                      }) }
+                    </>
+                }
+            };
+
+            let mut filtered_items = self
+                .items
+                .iter()
+                .filter(|item| q.match_item(item))
+                .take(50)
+                .peekable();
+
+            let item_list = if filtered_items.peek().is_none() {
+                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
+            } else {
+                html! {
+                    <>
+                    { for filtered_items
+                      .map(|item| {
+                          html! {
+                              <li><span>{ &item.title }</span></li>
+                          }
+                      }) }
+                    </>
+                }
+            };
+
+            html! {
+                <ul class="FilterList", >
+                    <li class="FilterHeader", >{ "Albums" }</li>
+                    { album_list }
+                    <li class="FilterHeader", >{ "Tracks" }</li>
+                    { item_list }
+                </ul>
+            }
         };
 
         html! {

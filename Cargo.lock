@@ -97,6 +97,7 @@ name = "beet-up-www"
 version = "0.1.0"
 dependencies = [
  "beet_db 0.1.0",
+ "beet_query 0.1.0",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "stdweb 0.4.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "yew 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
