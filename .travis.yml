@@ -5,6 +5,8 @@ rust:
   - nightly
 cache: cargo
 
+&wasm_target: "target/wasm32-unknown-unknown/release"
+
 stages:
   - lint
   - test
@@ -19,7 +21,10 @@ matrix:
   include:
     - stage: lint
       rust: stable
-      before_script: ./ci/prelint.sh
+      before_script:
+        - rustup component add clippy
+        - mkdir -p *wasm_target
+        - touch *wasm_target/beet-up-www.{js,wasm}
       script: cargo clippy --all -- -D warnings
   allow_failures:
     - rust: nightly
