@@ -5,23 +5,17 @@ stages:
   - lint
   - test
 
+before_script: ./ci/prebuild.sh
+script: ./ci/build.sh
+
+env:
+  matrix:
+    - RUST=stable
+    - RUST=beta
+    - RUST=nightly
+
 matrix:
   include:
-    - stage: test
-      env:
-        - RUST=stable
-      before_script: ./ci/prebuild.sh
-      script: ./ci/build.sh
-    - stage: test
-      env:
-        - RUST=beta
-      before_script: ./ci/prebuild.sh
-      script: ./ci/build.sh
-    - stage: test
-      env:
-        - RUST=nightly
-      before_script: ./ci/prebuild.sh
-      script: ./ci/build.sh
     - stage: lint
       before_script: ./ci/prelint.sh
       script: ./ci/lint.sh
