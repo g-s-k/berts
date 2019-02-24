@@ -1,8 +1,4 @@
 language: rust
-rust:
-  - stable
-  - beta
-  - nightly
 cache: cargo
 
 stages:
@@ -16,9 +12,13 @@ matrix:
       before_script:
         - rustup component add clippy
         - mkdir -p target/wasm32-unknown-unknown/release
-        - touch target/wasm32-unknown-unknown/release/beet-up-www.js target/wasm32-unknown-unknown/release/beet-up-www.wasm
+        - touch target/wasm32-unknown-unknown/release/beet-up-www.{js,wasm}
       script: cargo clippy --all --verbose -- -D warnings
     - stage: test
+      rust:
+        - stable
+        -beta
+        - nightly
       before_script:
         - which cargo-web || cargo install cargo-web
         - rm -rf target/wasm32-unknown-unknown
