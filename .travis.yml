@@ -17,7 +17,7 @@ matrix:
     - stage: test
       rust:
         - stable
-        -beta
+        - beta
         - nightly
       before_script:
         - which cargo-web || cargo install cargo-web
