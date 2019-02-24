@@ -19,7 +19,9 @@ matrix:
         - touch target/wasm32-unknown-unknown/release/beet-up-www.js target/wasm32-unknown-unknown/release/beet-up-www.wasm
       script: cargo clippy --all --verbose -- -D warnings
     - stage: test
-      before_script: which cargo-web || cargo install cargo-web
+      before_script:
+        - which cargo-web || cargo install cargo-web
+        - rm -rf target/wasm32-unknown-unknown
       script:
         - cargo web build --release -p beet-up-www
         - cargo build --verbose
