@@ -3,7 +3,7 @@ cache: cargo
 
 stages:
   - lint
-  - test
+  - build
 
 matrix:
   include:
@@ -14,7 +14,7 @@ matrix:
         - mkdir -p target/wasm32-unknown-unknown/release
         - touch target/wasm32-unknown-unknown/release/beet-up-www.{js,wasm}
       script: cargo clippy --all --verbose -- -D warnings
-    - stage: test
+    - stage: build
       rust:
         - stable
         - beta
