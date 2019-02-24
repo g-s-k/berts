@@ -16,6 +16,10 @@ matrix:
       before_script: ./ci/prelint.sh
       script: ./ci/lint.sh
     - stage: test
+      rust:
+        - stable
+        - beta
+        - nightly
       before_script: ./ci/prebuild.sh
       script: ./ci/build.sh
   allow_failures:
