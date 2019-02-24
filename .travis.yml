@@ -10,7 +10,15 @@ matrix:
     - stage: test
       env:
         - RUST=stable
+      before_script: ./ci/prebuild.sh
+      script: ./ci/build.sh
+    - stage: test
+      env:
         - RUST=beta
+      before_script: ./ci/prebuild.sh
+      script: ./ci/build.sh
+    - stage: test
+      env:
         - RUST=nightly
       before_script: ./ci/prebuild.sh
       script: ./ci/build.sh
