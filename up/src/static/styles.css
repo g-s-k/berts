@@ -160,6 +160,8 @@ table {
 .TrackList {
   flex: 1;
   overflow-y: auto;
+  user-select: none;
+  -moz-user-select: none;
 }
 
 .TrackList > .EmptyTrackList {
@@ -167,10 +169,8 @@ table {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  text-align: center;
-  white-space: pre-line;
 }
 
 .TrackList > table {
@@ -178,8 +178,6 @@ table {
   table-layout: fixed;
   width: 100%;
   white-space: nowrap;
-  user-select: none;
-  -moz-user-select: none;
 }
 
 .TrackList > table > thead > tr > th {

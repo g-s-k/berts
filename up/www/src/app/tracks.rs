@@ -55,7 +55,9 @@ impl Renderable<TrackList<'static>> for TrackList<'static> {
         } else if self.items.is_empty() {
             html! {
                 <div class="EmptyTrackList", >
-                { "Playlist is empty.\nAdd tracks by entering a query on the left and clicking on their entries." }
+                    <span>{ "Playlist is empty."}</span>
+                    <br />
+                    <span>{"Add tracks by entering a query on the left and clicking on the entries that match." }</span>
                 </div>
             }
         } else {
