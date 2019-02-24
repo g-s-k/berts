@@ -15,7 +15,7 @@ matrix:
       rust: stable
       before_script: ./ci/prelint.sh
       script: ./ci/lint.sh
-    - stage: build
+    - stage: test
       before_script: ./ci/prebuild.sh
       script: ./ci/build.sh
   allow_failures:
