@@ -38,7 +38,7 @@ div.input > input {
 
 div.input > i {
   align-self: center;
-  color: gray;
+  color: #777;
   font-size: 16pt;
   font-style: normal;
   cursor: pointer;
@@ -46,8 +46,29 @@ div.input > i {
   -moz-user-select: none;
 }
 
-div.input > i.active {
-  color: snow;
+div.input > i:hover {
+  color: #999;
+}
+
+div.input > i:active {
+  color: #aaa;
+}
+
+button {
+  color: inherit;
+  background-color: #111;
+  border: 1px solid dimgray;
+  opacity: 0.9;
+  border-radius: 0.125rem;
+  font-size: 0.8em;
+  padding: 0.25rem 0.5rem;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 1;
+  background-color: #151515;
 }
 
 table {
@@ -138,7 +159,6 @@ table {
 
 .TrackList {
   flex: 1;
-  padding: 0.5em 0;
   overflow-y: auto;
 }
 
@@ -149,17 +169,25 @@ table {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  text-align: center;
+  white-space: pre-line;
 }
 
 .TrackList > table {
-  font-family: monospace;
   font-size: 0.8em;
   table-layout: fixed;
   width: 100%;
   white-space: nowrap;
+  user-select: none;
+  -moz-user-select: none;
 }
 
-.TrackList > table > thead {
+.TrackList > table > thead > tr > th {
+  padding-top: 0.25em;
+  position: sticky;
+  top: 0;
+  background-color: #222;
+  z-index: 1;
   text-align: left;
 }
 
@@ -167,11 +195,20 @@ table {
   line-height: 1.5em;
 }
 
+.TrackEntry:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.TrackEntry:active {
+  background-color: rgba(255, 255, 255, 0.065);
+}
+
 .TrackEntry > td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 0.5rem;
+  cursor: pointer;
 }
 
 .TrackEntry > td:first-child,
@@ -182,10 +219,6 @@ table {
 .TrackEntry > td:last-child,
 .TrackList > table > thead > tr > th:last-child {
   padding-right: 1.5rem;
-}
-
-.TrackEntry:nth-child(odd) {
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .row-title, .row-artist {

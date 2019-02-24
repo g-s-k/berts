@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use failure::Error;
 use stdweb::{__internal_console_unsafe, _js_impl, console, js};
 use yew::format::{Json, Nothing};
@@ -22,6 +24,9 @@ pub enum Msg {
     AlbumsFetched(Result<Vec<Album>, Error>),
     FetchItems,
     ItemsFetched(Result<Vec<Item>, Error>),
+    SelectAlbum(u32),
+    SelectItem(u32),
+    ClearSelection,
 }
 
 pub struct App {
@@ -31,6 +36,7 @@ pub struct App {
     query: String,
     albums: Vec<Album>,
     items: Vec<Item>,
+    selected: HashSet<u32>,
 }
 
 impl Component for App {
@@ -48,6 +54,7 @@ impl Component for App {
             query: String::new(),
             albums: Vec::new(),
             items: Vec::new(),
+            selected: HashSet::new(),
         }
     }
 
@@ -90,11 +97,26 @@ impl Component for App {
             Msg::ItemsFetched(Ok(a)) => {
                 self.items = a;
                 self.prune_fetches();
+                self.init_selected();
             }
             Msg::ItemsFetched(Err(e)) => {
                 console!(error, format!("Fetch error: {:#?}", e));
                 self.prune_fetches();
             }
+            Msg::SelectAlbum(a_id) => {
+                for Item { id, album_id, .. } in &self.items {
+                    match album_id {
+                        Some(album_id) if *album_id == a_id => {
+                            self.selected.insert(*id);
+                        }
+                        _ => (),
+                    }
+                }
+            }
+            Msg::SelectItem(id) => {
+                self.selected.insert(id);
+            }
+            Msg::ClearSelection => self.selected.clear(),
         }
 
         true
@@ -122,8 +144,14 @@ impl Renderable<App> for App {
                     <>
                     { for filtered_albums
                       .map(|album| {
+                          let id = album.id;
+                          let title = format!("{} - {} [{}]", album.albumartist, album.album, album.year);
                           html! {
-                              <li><span>{ &album.album }</span></li>
+                              <li>
+                                  <span onclick=|_| Msg::SelectAlbum(id), title={ title }, >
+                                      { &album.album }
+                                  </span>
+                              </li>
                           }
                       }) }
                     </>
@@ -144,8 +172,13 @@ impl Renderable<App> for App {
                     <>
                     { for filtered_items
                       .map(|item| {
+                          let id = item.id;
                           html! {
-                              <li><span>{ &item.title }</span></li>
+                              <li>
+                                  <span onclick=|_| Msg::SelectItem(id), >
+                                      { &item.title }
+                                  </span>
+                              </li>
                           }
                       }) }
                     </>
@@ -161,6 +194,12 @@ impl Renderable<App> for App {
                 </ul>
             }
         };
+
+        let selected_tracks = self
+            .items
+            .iter()
+            .filter(|Item { id, .. }| self.selected.contains(id))
+            .collect::<Vec<_>>();
 
         html! {
             <div class="SplitPane", >
@@ -178,9 +217,10 @@ impl Renderable<App> for App {
                 </div>
                 <div class="Collection", >
                     <div class="ArtView", >
+                        <button onclick=|_| Msg::ClearSelection, >{ "Clear playlist" }</button>
                     </div>
                     <div class="PaneDivider", />
-                    <TrackList: is_fetching={ !self.fetch_tasks.is_empty() }, items={ &self.items }, />
+                    <TrackList: is_fetching={ !self.fetch_tasks.is_empty() }, items={ selected_tracks }, />
                 </div>
             </div>
         }
@@ -190,6 +230,16 @@ impl Renderable<App> for App {
 impl App {
     fn prune_fetches(&mut self) {
         self.fetch_tasks.retain(Task::is_active);
+    }
+
+    fn init_selected(&mut self) {
+        self.selected = self
+            .items
+            .iter()
+            .rev()
+            .take(250)
+            .map(|Item { id, .. }| *id)
+            .collect();
     }
 }
 

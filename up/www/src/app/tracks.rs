@@ -2,20 +2,20 @@ use yew::prelude::*;
 
 use beet_db::Item;
 
-pub struct TrackList {
+pub struct TrackList<'a> {
     is_fetching: bool,
-    items: Vec<Item>,
+    items: Vec<&'a Item>,
 }
 
 #[derive(Clone, Default, PartialEq)]
-pub struct Props {
+pub struct Props<'a> {
     pub is_fetching: bool,
-    pub items: Vec<Item>,
+    pub items: Vec<&'a Item>,
 }
 
-impl Component for TrackList {
+impl Component for TrackList<'static> {
     type Message = ();
-    type Properties = Props;
+    type Properties = Props<'static>;
 
     fn create(Props { is_fetching, items }: Self::Properties, _: ComponentLink<Self>) -> Self {
         Self { is_fetching, items }
@@ -32,7 +32,7 @@ impl Component for TrackList {
     }
 }
 
-impl Renderable<TrackList> for TrackList {
+impl Renderable<TrackList<'static>> for TrackList<'static> {
     fn view(&self) -> Html<Self> {
         let track_list = self.items.iter().map(|item| {
             html! {
@@ -50,6 +50,12 @@ impl Renderable<TrackList> for TrackList {
             html! {
                 <div class="EmptyTrackList", >
                 { "Fetching track list from server" }
+                </div>
+            }
+        } else if self.items.is_empty() {
+            html! {
+                <div class="EmptyTrackList", >
+                { "Playlist is empty.\nAdd tracks by entering a query on the left and clicking on their entries." }
                 </div>
             }
         } else {
