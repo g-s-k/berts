@@ -20,7 +20,7 @@ matrix:
     - stage: lint
       rust: stable
       before_script: ./ci/prelint.sh
-      script: ./ci/lint.sh
+      script: cargo clippy --all -- -D warnings
   allow_failures:
     - rust: nightly
   fast_finish: true
