@@ -6,8 +6,8 @@ edition = "2018"
 publish = false
 
 [dependencies]
-beet_db = { path = "../../db" }
-beet_query = { path = "../../query" }
+beet_db = { path = "../../../db" }
+beet_query = { path = "../../../query" }
 stdweb = "0.4.14"
 yew = "0.6"
 failure = "0.1.5"
