@@ -7,7 +7,7 @@ cache: cargo
 
 stages:
   - lint
-  - build
+  - test
 
 matrix:
   include:
