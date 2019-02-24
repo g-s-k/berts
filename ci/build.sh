@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cargo web build --release -p beet-up-www
-cargo build --verbose
-cargo test --verbose
+cargo +$RUST web build --release -p beet-up-www
+cargo +$RUST build --verbose
+cargo +$RUST test --verbose

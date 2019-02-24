@@ -1,8 +1,4 @@
 language: rust
-rust:
-  - stable
-  - beta
-  - nightly
 cache: cargo
 
 stages:
@@ -11,10 +7,14 @@ stages:
 
 matrix:
   include:
-    - script: ./ci/build.sh
+    - name: test
+      env:
+        - RUST=stable
+        - RUST=beta
+        - RUST=nightly
       before_script: ./ci/prebuild.sh
+      script: ./ci/build.sh
     - stage: lint
-      rust: stable
       before_script: ./ci/prelint.sh
       script: ./ci/lint.sh
   allow_failures:
