@@ -206,9 +206,8 @@ body > div.Playlist {
   padding-left: 0.5rem;
 }
 
-.TrackEntry > td:last-child,
-.TrackList > table > thead > tr > th:last-child {
-  padding-right: 1.5rem;
+.row-delete {
+  width: 1em;
 }
 
 .row-title, .row-artist {
@@ -220,5 +219,22 @@ body > div.Playlist {
 }
 
 .row-year {
-  width: 3rem;
+  width: 3em;
+}
+
+.TrackList > table > thead > tr > th:last-child {
+  width: 1em;
+}
+
+.TrackEntry:hover > td > .rm-btn:after {
+  content: "×";
+  color: #777;
+}
+
+.TrackEntry > td:hover > .rm-btn:after {
+  color: #999;
+}
+
+.TrackEntry > td:active > .rm-btn:after {
+  color: #aaa;
 }

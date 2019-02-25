@@ -25,6 +25,7 @@ pub enum Msg {
     ItemsFetched(Result<Vec<Item>, Error>),
     SelectAlbum(u32),
     SelectItem(u32),
+    DeselectItem(u32),
     ClearSelection,
 }
 
@@ -106,6 +107,9 @@ impl Component for App {
             Msg::SelectItem(id) => {
                 self.selected.insert(id);
             }
+            Msg::DeselectItem(id) => {
+                self.selected.remove(&id);
+            }
             Msg::ClearSelection => self.selected.clear(),
         }
 
@@ -143,6 +147,7 @@ impl Renderable<App> for App {
                     <TrackList:
                         is_fetching={ !self.fetch_tasks.is_empty() },
                         items={ selected_tracks },
+                        deselect=Msg::DeselectItem,
                     />
                 </div>
             </>
