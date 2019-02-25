@@ -10,15 +10,14 @@ use yew::services::{
 };
 
 use beet_db::{Album, Item};
-use beet_query::Query;
 
+mod filter;
 mod tracks;
 
+use filter::Filter;
 use tracks::TrackList;
 
 pub enum Msg {
-    Input(String),
-    Clear,
     RequestFailed,
     FetchAlbums,
     AlbumsFetched(Result<Vec<Album>, Error>),
@@ -33,7 +32,6 @@ pub struct App {
     link: ComponentLink<App>,
     fetch_service: FetchService,
     fetch_tasks: Vec<FetchTask>,
-    query: String,
     albums: Vec<Album>,
     items: Vec<Item>,
     selected: HashSet<u32>,
@@ -51,7 +49,6 @@ impl Component for App {
             link,
             fetch_service: FetchService::new(),
             fetch_tasks: Vec::new(),
-            query: String::new(),
             albums: Vec::new(),
             items: Vec::new(),
             selected: HashSet::new(),
@@ -60,13 +57,6 @@ impl Component for App {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Clear => {
-                self.query.clear();
-                js! { document.getElementById("searchbar").focus() }
-            }
-            Msg::Input(s) => {
-                self.query = s;
-            }
             Msg::RequestFailed => self.prune_fetches(),
             Msg::FetchAlbums => {
                 let req = Request::get("http://localhost:8337/album")
@@ -125,75 +115,6 @@ impl Component for App {
 
 impl Renderable<App> for App {
     fn view(&self) -> Html<Self> {
-        let filter_list = if self.query.is_empty() {
-            html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
-        } else {
-            let q = self.query.parse::<Query>().unwrap();
-
-            let mut filtered_albums = self
-                .albums
-                .iter()
-                .filter(|album| q.match_album(album))
-                .take(15)
-                .peekable();
-
-            let album_list = if filtered_albums.peek().is_none() {
-                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
-            } else {
-                html! {
-                    <>
-                    { for filtered_albums
-                      .map(|album| {
-                          let id = album.id;
-                          let title = format!("{} - {} [{}]", album.albumartist, album.album, album.year);
-                          html! {
-                              <li>
-                                  <span onclick=|_| Msg::SelectAlbum(id), title={ title }, >
-                                      { &album.album }
-                                  </span>
-                              </li>
-                          }
-                      }) }
-                    </>
-                }
-            };
-
-            let mut filtered_items = self
-                .items
-                .iter()
-                .filter(|item| q.match_item(item))
-                .take(50)
-                .peekable();
-
-            let item_list = if filtered_items.peek().is_none() {
-                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
-            } else {
-                html! {
-                    <>
-                    { for filtered_items
-                      .map(|item| {
-                          let id = item.id;
-                          html! {
-                              <li>
-                                  <span onclick=|_| Msg::SelectItem(id), >
-                                      { &item.title }
-                                  </span>
-                              </li>
-                          }
-                      }) }
-                    </>
-                }
-            };
-
-            html! {
-                <ul class="FilterList", >
-                    <li class="FilterHeader", >{ "Albums" }</li>
-                    { album_list }
-                    <li class="FilterHeader", >{ "Tracks" }</li>
-                    { item_list }
-                </ul>
-            }
-        };
 
         let selected_tracks = self
             .items
@@ -203,18 +124,12 @@ impl Renderable<App> for App {
 
         html! {
             <div class="SplitPane", >
-                <div class="SideNav", >
-                    <div class="input", >
-                        <input
-                            id="searchbar",
-                            placeholder="Enter query...",
-                            oninput=|e| Msg::Input(e.value),
-                            value=&self.query,
-                        />
-                        <i onclick=|_| Msg::Clear, >{ "×" }</i>
-                    </div>
-                { filter_list }
-                </div>
+                <Filter:
+                    albums=&self.albums,
+                    items=&self.items,
+                    select_album=Msg::SelectAlbum,
+                    select_item=Msg::SelectItem,
+                />
                 <div class="Collection", >
                     <div class="ArtView", >
                         <button onclick=|_| Msg::ClearSelection, >{ "Clear playlist" }</button>
