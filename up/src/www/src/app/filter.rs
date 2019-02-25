@@ -53,16 +53,11 @@ impl Component for Filter {
     }
 
     fn change(&mut self, Props { albums, items, .. }: Self::Properties) -> ShouldRender {
-        let mut should = false;
+        let should = albums != self.albums || items != self.items;
 
-        if albums != self.albums {
+        if should {
             self.albums = albums;
-            should = true;
-        }
-
-        if items != self.items {
             self.items = items;
-            should = true;
         }
 
         should

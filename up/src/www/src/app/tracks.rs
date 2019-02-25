@@ -56,16 +56,11 @@ impl Component for TrackList<'static> {
             is_fetching, items, ..
         }: Self::Properties,
     ) -> ShouldRender {
-        let mut should = false;
+        let should = is_fetching != self.is_fetching || items != self.items;
 
-        if is_fetching != self.is_fetching {
+        if should {
             self.is_fetching = is_fetching;
-            should = true;
-        }
-
-        if items != self.items {
             self.items = items;
-            should = true;
         }
 
         should
