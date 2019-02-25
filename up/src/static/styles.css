@@ -6,7 +6,7 @@ body {
 }
 
 body {
-  font-size: 18pt;
+  font-size: 16pt;
   font-family: Helvetica, sans-serif;
   background-image: radial-gradient(circle at 20% 80%, #150000, black);
   color: snow;
@@ -43,6 +43,10 @@ div.input > i {
   cursor: pointer;
   user-select: none;
   -moz-user-select: none;
+}
+
+div.input > i:not(:last-child) {
+  margin-right: 0.25rem;
 }
 
 div.input > i:hover {

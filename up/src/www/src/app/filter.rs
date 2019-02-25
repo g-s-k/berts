@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use stdweb::{_js_impl, js};
 use yew::prelude::*;
 
@@ -7,6 +9,7 @@ use beet_query::Query;
 pub enum Msg {
     Input(String),
     Clear,
+    SelectAll,
     SelectAlbum(u32),
     SelectItem(u32),
 }
@@ -15,16 +18,16 @@ pub struct Filter {
     query: String,
     albums: Vec<Album>,
     items: Vec<Item>,
-    select_album: Option<Callback<u32>>,
-    select_item: Option<Callback<u32>>,
+    select_album: Option<Callback<HashSet<u32>>>,
+    select_item: Option<Callback<HashSet<u32>>>,
 }
 
 #[derive(Clone, Default, PartialEq)]
 pub struct Props {
     pub albums: Vec<Album>,
     pub items: Vec<Item>,
-    pub select_album: Option<Callback<u32>>,
-    pub select_item: Option<Callback<u32>>,
+    pub select_album: Option<Callback<HashSet<u32>>>,
+    pub select_item: Option<Callback<HashSet<u32>>>,
 }
 
 impl Component for Filter {
@@ -76,16 +79,33 @@ impl Component for Filter {
                 self.query = s;
                 true
             }
+            Msg::SelectAll => {
+                let hs: HashSet<_> = self.filter_albums().map(|Album { id, .. }| *id).collect();
+                if let Some(ref mut callback) = self.select_album {
+                    callback.emit(hs);
+                }
+
+                let hs: HashSet<_> = self.filter_items().map(|Item { id, .. }| *id).collect();
+                if let Some(ref mut callback) = self.select_item {
+                    callback.emit(hs);
+                }
+
+                false
+            }
             Msg::SelectAlbum(id) => {
                 if let Some(ref mut callback) = self.select_album {
-                    callback.emit(id);
+                    let mut hs = HashSet::new();
+                    hs.insert(id);
+                    callback.emit(hs);
                 }
 
                 false
             }
             Msg::SelectItem(id) => {
                 if let Some(ref mut callback) = self.select_item {
-                    callback.emit(id);
+                    let mut hs = HashSet::new();
+                    hs.insert(id);
+                    callback.emit(hs);
                 }
 
                 false
@@ -99,14 +119,7 @@ impl Renderable<Self> for Filter {
         let filter_list = if self.query.is_empty() {
             html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
         } else {
-            let q = self.query.parse::<Query>().unwrap();
-
-            let mut filtered_albums = self
-                .albums
-                .iter()
-                .filter(|album| q.match_album(album))
-                .take(15)
-                .peekable();
+            let mut filtered_albums = self.filter_albums().take(15).peekable();
 
             let album_list = if filtered_albums.peek().is_none() {
                 html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
@@ -129,12 +142,7 @@ impl Renderable<Self> for Filter {
                 }
             };
 
-            let mut filtered_items = self
-                .items
-                .iter()
-                .filter(|item| q.match_item(item))
-                .take(50)
-                .peekable();
+            let mut filtered_items = self.filter_items().take(50).peekable();
 
             let item_list = if filtered_items.peek().is_none() {
                 html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
@@ -175,10 +183,25 @@ impl Renderable<Self> for Filter {
                         oninput=|e| Msg::Input(e.value),
                         value=&self.query,
                     />
-                        <i onclick=|_| Msg::Clear, >{ "×" }</i>
+                    <i onclick=|_| Msg::SelectAll, title="Add all matches", >{ "+" }</i>
+                    <i onclick=|_| Msg::Clear, title="Clear search", >{ "×" }</i>
                 </div>
             { filter_list }
             </div>
         }
+    }
+}
+
+impl Filter {
+    fn filter_albums(&self) -> impl Iterator<Item = &Album> {
+        let q = self.query.parse::<Query>().unwrap();
+
+        self.albums.iter().filter(move |album| q.match_album(album))
+    }
+
+    fn filter_items(&self) -> impl Iterator<Item = &Item> {
+        let q = self.query.parse::<Query>().unwrap();
+
+        self.items.iter().filter(move |item| q.match_item(item))
     }
 }

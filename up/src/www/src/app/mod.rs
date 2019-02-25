@@ -23,8 +23,8 @@ pub enum Msg {
     AlbumsFetched(Result<Vec<Album>, Error>),
     FetchItems,
     ItemsFetched(Result<Vec<Item>, Error>),
-    SelectAlbum(u32),
-    SelectItem(u32),
+    SelectAlbums(HashSet<u32>),
+    SelectItems(HashSet<u32>),
     DeselectItem(u32),
     ClearSelection,
 }
@@ -94,18 +94,18 @@ impl Component for App {
                 console!(error, format!("Fetch error: {:#?}", e));
                 self.prune_fetches();
             }
-            Msg::SelectAlbum(a_id) => {
+            Msg::SelectAlbums(a_ids) => {
                 for Item { id, album_id, .. } in &self.items {
                     match album_id {
-                        Some(album_id) if *album_id == a_id => {
+                        Some(album_id) if a_ids.contains(album_id) => {
                             self.selected.insert(*id);
                         }
                         _ => (),
                     }
                 }
             }
-            Msg::SelectItem(id) => {
-                self.selected.insert(id);
+            Msg::SelectItems(ids) => {
+                self.selected.extend(ids);
             }
             Msg::DeselectItem(id) => {
                 self.selected.remove(&id);
@@ -130,8 +130,8 @@ impl Renderable<App> for App {
                 <Filter:
                     albums=&self.albums,
                     items=&self.items,
-                    select_album=Msg::SelectAlbum,
-                    select_item=Msg::SelectItem,
+                    select_album=Msg::SelectAlbums,
+                    select_item=Msg::SelectItems,
                 />
                 <div class="Playlist", >
                     <div class="TopBar", >
