@@ -115,7 +115,6 @@ impl Component for App {
 
 impl Renderable<App> for App {
     fn view(&self) -> Html<Self> {
-
         let selected_tracks = self
             .items
             .iter()
@@ -123,21 +122,30 @@ impl Renderable<App> for App {
             .collect::<Vec<_>>();
 
         html! {
-            <div class="SplitPane", >
+            <>
                 <Filter:
                     albums=&self.albums,
                     items=&self.items,
                     select_album=Msg::SelectAlbum,
                     select_item=Msg::SelectItem,
                 />
-                <div class="Collection", >
+                <div class="Playlist", >
                     <div class="ArtView", >
-                        <button onclick=|_| Msg::ClearSelection, >{ "Clear playlist" }</button>
+                        <audio controls="",>
+                            { "Your browser does not support the HTML5 " }
+                            <code>{ "audio" }</code>
+                            { " tag." }
+                        </audio>
+                        <button onclick=|_| Msg::ClearSelection, >
+                            { "Clear playlist" }
+                        </button>
                     </div>
-                    <div class="PaneDivider", />
-                    <TrackList: is_fetching={ !self.fetch_tasks.is_empty() }, items={ selected_tracks }, />
+                    <TrackList:
+                        is_fetching={ !self.fetch_tasks.is_empty() },
+                        items={ selected_tracks },
+                    />
                 </div>
-            </div>
+            </>
         }
     }
 }

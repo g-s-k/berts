@@ -1,7 +1,5 @@
 html,
-body,
-#app,
-.SplitPane {
+body {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -12,6 +10,7 @@ body {
   font-family: Helvetica, sans-serif;
   background-image: radial-gradient(circle at 20% 80%, #150000, black);
   color: snow;
+  display: flex;
 }
 
 ::-webkit-scrollbar {
@@ -75,10 +74,6 @@ table {
   border-collapse: collapse;
 }
 
-.SplitPane {
-  display: flex;
-}
-
 .SideNav {
   flex: 0 0 20rem;
   overflow: hidden;
@@ -138,7 +133,7 @@ table {
   text-decoration: underline dotted rgba(255, 255, 255, 0.7);
 }
 
-.Collection {
+body > div.Playlist {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -153,11 +148,8 @@ table {
   flex: 0 0 15em;
 }
 
-.PaneDivider {
-  height: 0.25rem;
-}
-
 .TrackList {
+  margin-top: 0.25rem;
   flex: 1;
   overflow-y: auto;
   user-select: none;
