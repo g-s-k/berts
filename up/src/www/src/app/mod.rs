@@ -134,15 +134,20 @@ impl Renderable<App> for App {
                     select_item=Msg::SelectItem,
                 />
                 <div class="Playlist", >
-                    <div class="ArtView", >
-                        <audio controls="",>
-                            { "Your browser does not support the HTML5 " }
-                            <code>{ "audio" }</code>
-                            { " tag." }
-                        </audio>
-                        <button onclick=|_| Msg::ClearSelection, >
-                            { "Clear playlist" }
-                        </button>
+                    <div class="TopBar", >
+                        <div class="Controls", >
+                            <button onclick=|_| Msg::ClearSelection, >
+                                { "Clear playlist" }
+                            </button>
+                        </div>
+                        <div class="Player", >
+                            <div>{ "No album art available" }</div>
+                            <audio controls="",>
+                                { "Your browser does not support the HTML5 " }
+                                <code>{ "audio" }</code>
+                                { " tag." }
+                            </audio>
+                        </div>
                     </div>
                     <TrackList:
                         is_fetching={ !self.fetch_tasks.is_empty() },

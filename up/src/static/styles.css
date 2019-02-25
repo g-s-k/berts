@@ -139,13 +139,36 @@ body > div.Playlist {
   flex-direction: column;
 }
 
-.ArtView,
+.Controls,
 .TrackList {
   background-color: rgba(127, 127, 127, 0.15);
 }
 
-.ArtView {
+.TopBar {
   flex: 0 0 15em;
+  display: flex;
+}
+
+.Controls {
+  flex: 1;
+  margin-right: 0.25rem;
+}
+
+.Player {
+  width: 14em;
+  display: flex;
+  flex-direction: column;
+}
+
+.Player > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.5);
+  user-select: none;
+  -moz-user-select: none;
 }
 
 .TrackList {
