@@ -95,6 +95,8 @@ table {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  user-select: none;
+  -moz-user-select: none;
 }
 
 .SideNav > .FilterList,
@@ -143,7 +145,14 @@ body > div.Playlist {
   flex-direction: column;
 }
 
+.Info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .Controls,
+.Metadata,
 .TrackList {
   background-color: rgba(127, 127, 127, 0.15);
 }
@@ -153,9 +162,29 @@ body > div.Playlist {
   display: flex;
 }
 
-.Controls {
+.Info {
   flex: 1;
   margin-right: 0.25rem;
+}
+
+.Controls {
+  flex: 1;
+}
+
+.Metadata {
+  flex: 0 1 4em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  user-select: none;
+  -moz-user-select: none;
+}
+
+.Metadata > span:first-child {
+  color: snow;
 }
 
 .Player {

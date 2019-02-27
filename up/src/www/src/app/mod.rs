@@ -36,6 +36,7 @@ pub struct App {
     albums: Vec<Album>,
     items: Vec<Item>,
     selected: HashSet<u32>,
+    current: Option<Item>,
 }
 
 impl Component for App {
@@ -53,6 +54,7 @@ impl Component for App {
             albums: Vec::new(),
             items: Vec::new(),
             selected: HashSet::new(),
+            current: None,
         }
     }
 
@@ -125,6 +127,20 @@ impl Renderable<App> for App {
             .filter(|Item { id, .. }| self.selected.contains(id))
             .collect::<Vec<_>>();
 
+        let meta = if let Some(item) = &self.current {
+            html! {
+                <>
+                    <span>{ &item.title }</span>
+                    <br />
+                    <span>{ &item.artist }</span>
+                    <br />
+                    <span>{ &item.album }</span>
+                </>
+            }
+        } else {
+            html! { {"No track playing"} }
+        };
+
         html! {
             <>
                 <Filter:
@@ -135,10 +151,15 @@ impl Renderable<App> for App {
                 />
                 <div class="Playlist", >
                     <div class="TopBar", >
-                        <div class="Controls", >
-                            <button onclick=|_| Msg::ClearSelection, >
-                                { "Clear playlist" }
-                            </button>
+                        <div class="Info", >
+                            <div class="Metadata", >
+                                {meta}
+                            </div>
+                            <div class="Controls", >
+                                <button onclick=|_| Msg::ClearSelection, >
+                                    { "Clear playlist" }
+                                </button>
+                            </div>
                         </div>
                         <div class="Player", >
                             <div>{ "No album art available" }</div>
