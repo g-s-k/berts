@@ -28,6 +28,7 @@ pub enum Msg {
     DeselectItem(u32),
     ClearSelection,
     SetCurrent(u32),
+    SetShuffle(bool),
 }
 
 pub struct App {
@@ -38,6 +39,7 @@ pub struct App {
     items: Vec<Item>,
     selected: HashSet<u32>,
     current: Option<Item>,
+    shuffle: bool,
 }
 
 impl Component for App {
@@ -56,6 +58,7 @@ impl Component for App {
             items: Vec::new(),
             selected: HashSet::new(),
             current: None,
+            shuffle: false,
         }
     }
 
@@ -113,7 +116,10 @@ impl Component for App {
             Msg::DeselectItem(id) => {
                 self.selected.remove(&id);
             }
-            Msg::ClearSelection => self.selected.clear(),
+            Msg::ClearSelection => {
+                self.selected.clear();
+                self.current.take();
+            }
             Msg::SetCurrent(s_id) => {
                 self.current = self
                     .items
@@ -121,6 +127,7 @@ impl Component for App {
                     .find(|Item { id, .. }| *id == s_id)
                     .cloned();
             }
+            Msg::SetShuffle(b) => self.shuffle = b,
         }
 
         true
@@ -149,6 +156,8 @@ impl Renderable<App> for App {
             html! { {"No track playing"} }
         };
 
+        let shuffle = self.shuffle;
+
         html! {
             <>
                 <Filter:
@@ -175,6 +184,15 @@ impl Renderable<App> for App {
                                 <button onclick=|_| Msg::ClearSelection, >
                                     { "Clear playlist" }
                                 </button>
+                                <label>
+                                    <input
+                                        type="checkbox",
+                                        checked=shuffle,
+                                        name="shuffle",
+                                        onclick=|_| Msg::SetShuffle(!shuffle),
+                                    />
+                                    <span>{ "Shuffle" }</span>
+                                </label>
                             </div>
                         </div>
                     </div>

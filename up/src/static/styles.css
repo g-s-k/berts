@@ -6,7 +6,7 @@
 
   --color-inactive: #777777;
   --color-hover: #999999;
-  --color-inactive: #aaaaaa;
+  --color-active: #aaaaaa;
 }
 
 html,
@@ -68,21 +68,41 @@ div.input > i:active {
   color: var(--color-active);
 }
 
-button {
+input[type="checkbox"] {
+  display: none;
+}
+
+button,
+input[type="checkbox"] + span {
   color: inherit;
-  background-color: #111;
+  background-color: #101010;
   border: 1px solid dimgray;
   opacity: 0.9;
   border-radius: 0.125em;
   font-size: 0.8em;
+  line-height: 1.5em;
   padding: 0.25em 0.5em;
+  display: inline-block;
   box-sizing: border-box;
   cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
 }
 
-button:hover {
+button:hover,
+input[type="checkbox"] + span:hover {
   opacity: 1;
   background-color: #151515;
+}
+
+button:active,
+input[type="checkbox"] + span:active {
+  opacity: 1;
+  background-color: #202020;
+}
+
+input[type="checkbox"]:checked + span {
+  background-color: red;
 }
 
 code {
@@ -191,7 +211,14 @@ body > div.Playlist {
 
 .Controls {
   flex: 1;
-  padding: var(--gutter-width);
+  padding: calc(var(--gutter-width) / 2);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.Controls > * {
+  margin: calc(var(--gutter-width) / 2);
 }
 
 .Metadata {
