@@ -151,6 +151,14 @@ impl Renderable<App> for App {
                 />
                 <div class="Playlist", >
                     <div class="TopBar", >
+                        <div class="Player", >
+                            <div>{ "No album art available" }</div>
+                            <audio controls="",>
+                                { "Your browser does not support the HTML5 " }
+                                <code>{ "audio" }</code>
+                                { " tag." }
+                            </audio>
+                        </div>
                         <div class="Info", >
                             <div class="Metadata", >
                                 {meta}
@@ -160,14 +168,6 @@ impl Renderable<App> for App {
                                     { "Clear playlist" }
                                 </button>
                             </div>
-                        </div>
-                        <div class="Player", >
-                            <div>{ "No album art available" }</div>
-                            <audio controls="",>
-                                { "Your browser does not support the HTML5 " }
-                                <code>{ "audio" }</code>
-                                { " tag." }
-                            </audio>
                         </div>
                     </div>
                     <TrackList:

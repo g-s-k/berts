@@ -117,10 +117,10 @@ impl Renderable<Self> for Filter {
             let mut filtered_albums = self.filter_albums().take(15).peekable();
 
             let album_list = if filtered_albums.peek().is_none() {
-                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
+                html! { <i>{ "No matches." }</i> }
             } else {
                 html! {
-                    <>
+                    <ul class="FilterList", >
                     { for filtered_albums
                       .map(|album| {
                           let id = album.id;
@@ -133,17 +133,17 @@ impl Renderable<Self> for Filter {
                               </li>
                           }
                       }) }
-                    </>
+                    </ul>
                 }
             };
 
             let mut filtered_items = self.filter_items().take(50).peekable();
 
             let item_list = if filtered_items.peek().is_none() {
-                html! { <li class="EmptyFilterSection", >{ "No matches." }</li> }
+                html! { <i>{ "No matches." }</i> }
             } else {
                 html! {
-                    <>
+                    <ul class="FilterList", >
                     { for filtered_items
                       .map(|item| {
                           let id = item.id;
@@ -155,17 +155,17 @@ impl Renderable<Self> for Filter {
                               </li>
                           }
                       }) }
-                    </>
+                    </ul>
                 }
             };
 
             html! {
-                <ul class="FilterList", >
-                    <li class="FilterHeader", >{ "Albums" }</li>
+                <>
+                    <h5>{ "Albums" }</h5>
                     { album_list }
-                    <li class="FilterHeader", >{ "Tracks" }</li>
+                    <h5>{ "Tracks" }</h5>
                     { item_list }
-                </ul>
+                </>
             }
         };
 

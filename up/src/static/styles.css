@@ -1,15 +1,26 @@
+:root {
+  --gutter-width: 0.25rem;
+
+  --text-color: snow;
+  --void-color: rgba(255, 255, 255, 0.6);
+
+  --color-inactive: #777777;
+  --color-hover: #999999;
+  --color-inactive: #aaaaaa;
+}
+
 html,
 body {
   height: 100%;
   width: 100%;
   margin: 0;
+  font-size: 13pt;
 }
 
 body {
-  font-size: 16pt;
   font-family: Helvetica, sans-serif;
   background-image: radial-gradient(circle at 20% 80%, #150000, black);
-  color: snow;
+  color: var(--text-color);
   display: flex;
 }
 
@@ -20,8 +31,8 @@ body {
 
 div.input {
   background-color: rgba(63, 63, 63, 0.3);
-  padding: 0.25rem 0.75rem 0.25rem 1rem;
-  border-radius: 1rem;
+  padding: 0.25em 0.75em 0.25em 1em;
+  border-radius: 1em;
   display: flex;
 }
 
@@ -30,14 +41,14 @@ div.input > input {
   flex: 1 1 auto;
   border: none;
   background-color: transparent;
-  color: snow;
-  font-size: 18pt;
+  color: var(--text-color);
+  font-size: 1em;
   outline: none;
 }
 
 div.input > i {
   align-self: center;
-  color: #777;
+  color: var(--color-inactive);
   font-size: 16pt;
   font-style: normal;
   cursor: pointer;
@@ -46,15 +57,15 @@ div.input > i {
 }
 
 div.input > i:not(:last-child) {
-  margin-right: 0.25rem;
+  margin-right: 0.25em;
 }
 
 div.input > i:hover {
-  color: #999;
+  color: var(--color-hover);
 }
 
 div.input > i:active {
-  color: #aaa;
+  color: var(--color-active);
 }
 
 button {
@@ -62,9 +73,9 @@ button {
   background-color: #111;
   border: 1px solid dimgray;
   opacity: 0.9;
-  border-radius: 0.125rem;
+  border-radius: 0.125em;
   font-size: 0.8em;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25em 0.5em;
   box-sizing: border-box;
   cursor: pointer;
 }
@@ -79,18 +90,19 @@ table {
 }
 
 .SideNav {
-  flex: 0 0 20rem;
+  margin: 1em 1em 0;
+  flex: 0 0 15em;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .SideNav > .input {
-  margin: 1rem;
+  margin-bottom: 1em;
 }
 
 .SideNav > .EmptyFilterList {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--void-color);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -99,34 +111,34 @@ table {
   -moz-user-select: none;
 }
 
-.SideNav > .FilterList,
 .SideNav > .EmptyFilterList {
   flex: 1;
   margin: 0;
 }
 
-.SideNav > .FilterList {
+.SideNav > ul {
   list-style: none;
+  margin: 0;
+  padding-left: 0.5em;
 }
 
-.FilterList > .FilterHeader {
+.SideNav > h5 {
+  margin: 0;
   color: rgba(255, 255, 255, 0.7);
-  font-weight: bold;
   text-transform: uppercase;
-  font-size: 0.8em;
   line-height: 2em;
-  cursor: default;
   user-select: none;
   -moz-user-select: none;
 }
 
-.FilterList > .FilterHeader:not(:first-child) {
+.SideNav > h5:not(:nth-child(2)) {
   margin-top: 0.75em;
 }
 
-.FilterList > li.EmptyFilterSection {
+.SideNav > i {
   color: rgba(255, 255, 255, 0.5);
   margin: 0.5em 0;
+  font-size: 0.9em;
 }
 
 .FilterList > li > span {
@@ -136,7 +148,7 @@ table {
 }
 
 .FilterList > li > span:hover {
-  text-decoration: underline dotted rgba(255, 255, 255, 0.7);
+  text-decoration: underline dotted var(--void-color);
 }
 
 body > div.Playlist {
@@ -158,23 +170,25 @@ body > div.Playlist {
 }
 
 .TopBar {
-  flex: 0 0 15em;
+  flex: 0 0 17.5em;
   display: flex;
+  flex-direction: row-reverse;
 }
 
 .Info {
   flex: 1;
-  margin-right: 0.25rem;
+  margin-right: var(--gutter-width);
 }
 
 .Controls {
   flex: 1;
+  padding: var(--gutter-width);
 }
 
 .Metadata {
   flex: 0 1 4em;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 0.25rem;
+  color: var(--void-color);
+  margin-bottom: var(--gutter-width);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -184,11 +198,11 @@ body > div.Playlist {
 }
 
 .Metadata > span:first-child {
-  color: snow;
+  color: var(--text-color);
 }
 
 .Player {
-  width: 14em;
+  width: 16.5em;
   display: flex;
   flex-direction: column;
 }
@@ -205,7 +219,7 @@ body > div.Playlist {
 }
 
 .TrackList {
-  margin-top: 0.25rem;
+  margin-top: var(--gutter-width);
   flex: 1;
   overflow-y: auto;
   user-select: none;
@@ -213,7 +227,7 @@ body > div.Playlist {
 }
 
 .TrackList > .EmptyTrackList {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--void-color);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -253,13 +267,13 @@ body > div.Playlist {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 0.5rem;
+  padding-right: calc(2 * var(--gutter-width));
   cursor: pointer;
 }
 
 .TrackEntry > td:first-child,
 .TrackList > table > thead > tr > th:first-child {
-  padding-left: 0.5rem;
+  padding-left: calc(2 * var(--gutter-width));
 }
 
 .row-delete {
@@ -284,13 +298,13 @@ body > div.Playlist {
 
 .TrackEntry:hover > td > .rm-btn:after {
   content: "×";
-  color: #777;
+  color: var(--color-inactive);
 }
 
 .TrackEntry > td:hover > .rm-btn:after {
-  color: #999;
+  color: var(--color-hover);
 }
 
 .TrackEntry > td:active > .rm-btn:after {
-  color: #aaa;
+  color: var(--color-active);
 }
