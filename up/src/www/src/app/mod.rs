@@ -27,6 +27,7 @@ pub enum Msg {
     SelectItems(HashSet<u32>),
     DeselectItem(u32),
     ClearSelection,
+    SetCurrent(u32),
 }
 
 pub struct App {
@@ -113,6 +114,13 @@ impl Component for App {
                 self.selected.remove(&id);
             }
             Msg::ClearSelection => self.selected.clear(),
+            Msg::SetCurrent(s_id) => {
+                self.current = self
+                    .items
+                    .iter()
+                    .find(|Item { id, .. }| *id == s_id)
+                    .cloned();
+            }
         }
 
         true
@@ -174,6 +182,7 @@ impl Renderable<App> for App {
                         is_fetching={ !self.fetch_tasks.is_empty() },
                         items={ selected_tracks },
                         deselect=Msg::DeselectItem,
+                        play_now=Msg::SetCurrent,
                     />
                 </div>
             </>

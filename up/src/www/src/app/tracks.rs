@@ -6,6 +6,7 @@ pub struct TrackList<'a> {
     is_fetching: bool,
     items: Vec<&'a Item>,
     deselect: Option<Callback<u32>>,
+    play_now: Option<Callback<u32>>,
 }
 
 #[derive(Clone, Default, PartialEq)]
@@ -13,10 +14,12 @@ pub struct Props<'a> {
     pub is_fetching: bool,
     pub items: Vec<&'a Item>,
     pub deselect: Option<Callback<u32>>,
+    pub play_now: Option<Callback<u32>>,
 }
 
 pub enum Msg {
     Deselect(u32),
+    PlayNow(u32),
 }
 
 impl Component for TrackList<'static> {
@@ -28,6 +31,7 @@ impl Component for TrackList<'static> {
             is_fetching,
             items,
             deselect,
+            play_now,
         }: Self::Properties,
         _: ComponentLink<Self>,
     ) -> Self {
@@ -35,6 +39,7 @@ impl Component for TrackList<'static> {
             is_fetching,
             items,
             deselect,
+            play_now,
         }
     }
 
@@ -42,6 +47,11 @@ impl Component for TrackList<'static> {
         match msg {
             Msg::Deselect(id) => {
                 if let Some(ref mut callback) = self.deselect {
+                    callback.emit(id);
+                }
+            }
+            Msg::PlayNow(id) => {
+                if let Some(ref mut callback) = self.play_now {
                     callback.emit(id);
                 }
             }
@@ -72,7 +82,7 @@ impl Renderable<TrackList<'static>> for TrackList<'static> {
         let track_list = self.items.iter().map(|item| {
             let id = item.id;
             html! {
-                <tr class="TrackEntry", >
+                <tr class="TrackEntry", onclick=|_| Msg::PlayNow(id), >
                     <td>
                         <span class="rm-btn", onclick=|_| Msg::Deselect(id), />
                     </td>

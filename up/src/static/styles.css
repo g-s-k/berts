@@ -186,12 +186,12 @@ body > div.Playlist {
 }
 
 .Metadata {
-  flex: 0 1 4em;
+  flex: 0 1 5em;
   color: var(--void-color);
   margin-bottom: var(--gutter-width);
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   user-select: none;
   -moz-user-select: none;
