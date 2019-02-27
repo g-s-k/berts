@@ -6,6 +6,9 @@ use yew::prelude::*;
 use beet_db::{Album, Item};
 use beet_query::Query;
 
+const EXAMPLE_1: &str = "foo bar baz";
+const EXAMPLE_2: &str = "albumartist:EPROM";
+
 pub enum Msg {
     Input(String),
     Clear,
@@ -112,7 +115,22 @@ impl Component for Filter {
 impl Renderable<Self> for Filter {
     fn view(&self) -> Html<Self> {
         let filter_list = if self.query.is_empty() {
-            html! { <div class="EmptyFilterList", >{ "No filter applied" }</div> }
+            html! {
+                <div class="EmptyFilterList", >
+                     { "No filter applied." }
+                    <p>
+                        { "Try typing something in above, e.g. " }
+                        <code onclick=|_| Msg::Input(EXAMPLE_1.to_string()), >
+                            { EXAMPLE_1 }
+                        </code>
+                        <br />
+                        { "or " }
+                        <code onclick=|_| Msg::Input(EXAMPLE_2.to_string()), >
+                            { EXAMPLE_2 }
+                        </code>
+                    </p>
+                </div>
+            }
         } else {
             let mut filtered_albums = self.filter_albums().take(15).peekable();
 

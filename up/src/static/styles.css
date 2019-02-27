@@ -85,6 +85,10 @@ button:hover {
   background-color: #151515;
 }
 
+code {
+  background-color: #222;
+}
+
 table {
   border-collapse: collapse;
 }
@@ -102,18 +106,23 @@ table {
 }
 
 .SideNav > .EmptyFilterList {
+  flex: 1;
+  margin: 0;
   color: var(--void-color);
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   user-select: none;
   -moz-user-select: none;
 }
 
-.SideNav > .EmptyFilterList {
-  flex: 1;
-  margin: 0;
+.SideNav > .EmptyFilterList > p {
+  text-align: center;
+}
+
+.SideNav > .EmptyFilterList > p > code {
+  cursor: pointer;
 }
 
 .SideNav > ul {
