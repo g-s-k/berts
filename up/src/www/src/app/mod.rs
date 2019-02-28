@@ -66,7 +66,7 @@ impl Component for App {
         match msg {
             Msg::RequestFailed => self.prune_fetches(),
             Msg::FetchAlbums => {
-                let req = Request::get("http://localhost:8337/album")
+                let req = Request::get("/album")
                     .body(Nothing)
                     .unwrap();
                 let task = self
@@ -83,7 +83,7 @@ impl Component for App {
                 self.prune_fetches();
             }
             Msg::FetchItems => {
-                let req = Request::get("http://localhost:8337/item")
+                let req = Request::get("/item")
                     .body(Nothing)
                     .unwrap();
                 let task = self
