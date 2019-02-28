@@ -66,9 +66,7 @@ impl Component for App {
         match msg {
             Msg::RequestFailed => self.prune_fetches(),
             Msg::FetchAlbums => {
-                let req = Request::get("/album")
-                    .body(Nothing)
-                    .unwrap();
+                let req = Request::get("/album").body(Nothing).unwrap();
                 let task = self
                     .fetch_service
                     .fetch(req, self.link.send_back(album_fetch_cback));
@@ -83,9 +81,7 @@ impl Component for App {
                 self.prune_fetches();
             }
             Msg::FetchItems => {
-                let req = Request::get("/item")
-                    .body(Nothing)
-                    .unwrap();
+                let req = Request::get("/item").body(Nothing).unwrap();
                 let task = self
                     .fetch_service
                     .fetch(req, self.link.send_back(item_fetch_cback));
@@ -156,6 +152,21 @@ impl Renderable<App> for App {
             html! { {"No track playing"} }
         };
 
+        let mut art_uri = String::new();
+        let mut track_uri = String::new();
+
+        if let Some(item) = &self.current {
+            track_uri = format!("/item/{}/file", item.id);
+
+            if let Some(a_id) = item.album_id {
+                if let Some(album) = self.albums.iter().find(|Album { id, .. }| *id == a_id) {
+                    if album.artpath.is_some() {
+                        art_uri = format!("/album/{}/art", a_id);
+                    }
+                }
+            }
+        }
+
         let shuffle = self.shuffle;
 
         html! {
@@ -169,8 +180,8 @@ impl Renderable<App> for App {
                 <div class="Playlist", >
                     <div class="TopBar", >
                         <div class="Player", >
-                            <div>{ "No album art available" }</div>
-                            <audio controls="",>
+                            <img alt="No album art available", src={ art_uri }, />
+                            <audio controls="", src={ track_uri }, >
                                 { "Your browser does not support the HTML5 " }
                                 <code>{ "audio" }</code>
                                 { " tag." }
