@@ -178,15 +178,13 @@ impl Renderable<App> for App {
                     select_item=Msg::SelectItems,
                 />
                 <div class="Playlist", >
+                    <audio controls="", src={ track_uri }, autoplay="", >
+                        { "Your browser does not support the HTML5 " }
+                        <code>{ "audio" }</code>
+                        { " tag." }
+                    </audio>
                     <div class="TopBar", >
-                        <div class="Player", >
-                            <img alt="No album art available", src={ art_uri }, />
-                            <audio controls="", src={ track_uri }, >
-                                { "Your browser does not support the HTML5 " }
-                                <code>{ "audio" }</code>
-                                { " tag." }
-                            </audio>
-                        </div>
+                        <img alt="No album art available", src={ art_uri }, />
                         <div class="Info", >
                             <div class="Metadata", >
                                 {meta}

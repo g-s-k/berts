@@ -186,6 +186,10 @@ body > div.Playlist {
   flex-direction: column;
 }
 
+.Playlist > audio {
+  margin: var(--gutter-width) 0;
+}
+
 .Info {
   flex: 1;
   display: flex;
@@ -229,6 +233,7 @@ body > div.Playlist {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  line-height: 1.25em;
   user-select: none;
   -moz-user-select: none;
 }
@@ -237,15 +242,9 @@ body > div.Playlist {
   color: var(--text-color);
 }
 
-.Player {
+.TopBar > img {
   width: 16.5em;
-  display: flex;
-  flex-direction: column;
-}
-
-.Player > img {
   flex: 1;
-  max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
