@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
 use warp::{
     http::{Response, Uri},
+    path::Tail,
     reject::{custom, not_found},
     reply::{html, json, with_header},
     Rejection, Reply,
@@ -36,6 +37,18 @@ fn req_err<T>(msg: &'static str) -> impl FnOnce(T) -> Rejection {
 
 fn sync_err<T>(_: T) -> Rejection {
     custom(Error::Sync)
+}
+
+pub fn check_path(tail: Tail, model: Model) -> Result<(), Rejection> {
+    let path = PathBuf::from(percent_decode(tail.as_str().as_bytes())
+                             .decode_utf8()
+                             .map_err(req_err("could not decode path to item"))?
+                             .to_string());
+    model.lock().map_err(sync_err).and_then(|m| if m.check_path(&path) {
+        Ok(())
+    } else {
+        Err(custom(Error::BadRequest("Path was not found in library.")))
+    })
 }
 
 pub fn get_index() -> impl Reply {
@@ -151,7 +164,7 @@ pub fn get_item_ids(ids: Vec<u32>, model: Model) -> Result<impl Reply, Rejection
         .map(|m| json(&m.get_item_ids(&ids)))
 }
 
-pub fn get_item_path(path: warp::path::Tail, model: Model) -> Result<impl Reply, Rejection> {
+pub fn get_item_path(path: Tail, model: Model) -> Result<impl Reply, Rejection> {
     model
         .lock()
         .map_err(sync_err)?

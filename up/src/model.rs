@@ -9,6 +9,7 @@ use beet_query::Query;
 pub struct Model {
     albums: Vec<Album>,
     items: Vec<Item>,
+    legal_paths: HashSet<PathBuf>,
 }
 
 #[derive(Serialize)]
@@ -21,7 +22,18 @@ impl Model {
     pub fn new(db_path: PathBuf) -> Self {
         let err_msg = format!("Could not read database at {:?}", db_path);
         let (albums, items) = read_all(db_path).expect(&err_msg);
-        Self { albums, items }
+
+        let legal_paths = albums
+            .iter()
+            .filter_map(|Album { artpath, .. }| artpath.clone())
+            .chain(items.iter().map(|Item { path, .. }| path).cloned())
+            .collect();
+
+        Self {
+            albums,
+            items,
+            legal_paths,
+        }
     }
 
     pub fn get_stats(&self) -> Stats {
@@ -33,6 +45,10 @@ impl Model {
 
     pub fn get_all_albums(&self) -> Vec<Album> {
         self.albums.clone()
+    }
+
+    pub fn check_path(&self, path: &PathBuf) -> bool {
+        self.legal_paths.contains(path)
     }
 
     pub fn get_album_items_id(&self, id: u32) -> Vec<Item> {

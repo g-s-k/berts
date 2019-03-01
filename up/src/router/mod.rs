@@ -38,13 +38,23 @@ fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
 }
 
 pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
-    let files = path("file").and(warp::fs::dir("/"));
     route_static()
         .or(route_items(model.clone()))
         .or(route_albums(model.clone()))
         .or(route_stats(model.clone()))
-        .or(files)
+        .or(route_files(model.clone()))
         .recover(customize_error)
+        .boxed()
+}
+
+fn route_files(model: Model) -> BoxedFilter<(impl Reply,)> {
+    let db = warp::any().map(move || model.clone());
+    path("file")
+        .and(path::tail())
+        .and(db.clone())
+        .and_then(handlers::check_path)
+        .untuple_one()
+        .and(warp::fs::dir("/"))
         .boxed()
 }
 
