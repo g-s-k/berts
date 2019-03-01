@@ -1,7 +1,7 @@
 use std::fs::{DirBuilder, File};
 use std::io::{prelude::*, Result};
 
-use base64::{encode_config, URL_SAFE};
+use base64::encode;
 
 fn main() -> Result<()> {
     DirBuilder::new().recursive(true).create("tmp_static")?;
@@ -10,7 +10,7 @@ fn main() -> Result<()> {
     html_out.write_all(
         format!(
             include_str!("src/static/index.html"),
-            icon = encode_config(&include_bytes!("src/static/beet.ico")[..], URL_SAFE),
+            icon = encode(&include_bytes!("src/static/beet.ico")[..]),
             styles = include_str!("src/static/styles.css"),
             script = include_str!("../target/wasm32-unknown-unknown/release/beet-up-www.js")
         )
