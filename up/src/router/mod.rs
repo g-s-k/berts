@@ -1,6 +1,10 @@
 use std::fmt;
 use warp::{
-    filters::BoxedFilter, http::StatusCode, path, reply::with_status, Filter, Rejection, Reply,
+    filters::BoxedFilter,
+    http::StatusCode,
+    path,
+    reply::{html, with_status},
+    Filter, Rejection, Reply,
 };
 
 use super::Model;
@@ -60,11 +64,10 @@ fn route_files(model: Model) -> BoxedFilter<(impl Reply,)> {
 
 fn route_static() -> BoxedFilter<(impl Reply,)> {
     path::end()
-        .map(handlers::get_index)
+        .map(|| html(include_str!("../../tmp_static/index.html")))
         .or(path("beet-up-www.wasm")
             .and(path::end())
             .map(handlers::get_wasm))
-        .or(path("favicon.ico").and(path::end()).map(handlers::get_icon))
         .boxed()
 }
 

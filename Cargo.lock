@@ -81,6 +81,7 @@ dependencies = [
 name = "beet-up"
 version = "0.1.0"
 dependencies = [
+ "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "beet_db 0.1.0",
  "beet_query 0.1.0",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",

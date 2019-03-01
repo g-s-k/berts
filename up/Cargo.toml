@@ -3,6 +3,7 @@ name = "beet-up"
 version = "0.1.0"
 authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
 beet_db = { path = "../db" }
@@ -14,3 +15,6 @@ log = "0.4.6"
 serde_derive = "1.0.88"
 serde = "1.0.88"
 url = "1.7.2"
+
+[build-dependencies]
+base64 = "0.10.1"

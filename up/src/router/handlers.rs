@@ -7,7 +7,7 @@ use warp::{
     http::{Response, Uri},
     path::Tail,
     reject::{custom, not_found},
-    reply::{html, json, with_header},
+    reply::{json, with_header},
     Rejection, Reply,
 };
 
@@ -15,21 +15,6 @@ use beet_query::Query;
 
 use super::super::Model;
 use super::Error;
-
-macro_rules! www_target {
-    ($ext:expr) => {
-        concat!(
-            "../../../target/wasm32-unknown-unknown/release/beet-up-www.",
-            $ext
-        )
-    };
-}
-
-macro_rules! static_file {
-    ($ext:expr) => {
-        concat!("../static/", $ext)
-    };
-}
 
 fn req_err<T>(msg: &'static str) -> impl FnOnce(T) -> Rejection {
     move |_| custom(Error::BadRequest(msg))
@@ -40,38 +25,28 @@ fn sync_err<T>(_: T) -> Rejection {
 }
 
 pub fn check_path(tail: Tail, model: Model) -> Result<(), Rejection> {
-    let path = PathBuf::from(percent_decode(tail.as_str().as_bytes())
-                             .decode_utf8()
-                             .map_err(req_err("could not decode path to item"))?
-                             .to_string());
-    model.lock().map_err(sync_err).and_then(|m| if m.check_path(&path) {
-        Ok(())
-    } else {
-        Err(custom(Error::BadRequest("Path was not found in library.")))
+    let path = PathBuf::from(
+        percent_decode(tail.as_str().as_bytes())
+            .decode_utf8()
+            .map_err(req_err("could not decode path to item"))?
+            .to_string(),
+    );
+    model.lock().map_err(sync_err).and_then(|m| {
+        if m.check_path(&path) {
+            Ok(())
+        } else {
+            Err(custom(Error::BadRequest("Path was not found in library.")))
+        }
     })
-}
-
-pub fn get_index() -> impl Reply {
-    html(format!(
-        include_str!(static_file!("index.html")),
-        styles = include_str!(static_file!("styles.css")),
-        script = include_str!(www_target!("js"))
-    ))
 }
 
 pub fn get_wasm() -> impl Reply {
     with_header(
-        Response::new(&include_bytes!(www_target!("wasm"))[..]),
+        Response::new(
+            &include_bytes!("../../../target/wasm32-unknown-unknown/release/beet-up-www.wasm")[..],
+        ),
         "content-type",
         "application/wasm",
-    )
-}
-
-pub fn get_icon() -> impl Reply {
-    with_header(
-        Response::new(&include_bytes!(static_file!("beet.ico"))[..]),
-        "content-type",
-        "image/x-icon",
     )
 }
 
