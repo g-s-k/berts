@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use url::percent_encoding::{percent_decode, utf8_percent_encode, DEFAULT_ENCODE_SET};
 use warp::{
     http::{Response, Uri},
-    path::Tail,
+    path::{Peek, Tail},
     reject::{custom, not_found},
     reply::{json, with_header},
     Rejection, Reply,
@@ -24,7 +24,7 @@ fn sync_err<T>(_: T) -> Rejection {
     custom(Error::Sync)
 }
 
-pub fn check_path(tail: Tail, model: Model) -> Result<(), Rejection> {
+pub fn check_path(tail: Peek, model: Model) -> Result<(), Rejection> {
     let path = PathBuf::from(
         percent_decode(tail.as_str().as_bytes())
             .decode_utf8()

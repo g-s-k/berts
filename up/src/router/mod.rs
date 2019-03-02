@@ -54,7 +54,7 @@ pub fn router(model: &Model) -> BoxedFilter<(impl Reply,)> {
 fn route_files(model: Model) -> BoxedFilter<(impl Reply,)> {
     let db = warp::any().map(move || model.clone());
     path("file")
-        .and(path::tail())
+        .and(path::peek())
         .and(db.clone())
         .and_then(handlers::check_path)
         .untuple_one()
