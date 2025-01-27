@@ -4,7 +4,7 @@ description = "Read a beets music database"
 version = "0.1.0"
 authors = ["George Kaplan <george@georgekaplan.xyz>"]
 edition = "2018"
-repository = "https://github.com/g-s-k/berts/tree/master/beet-db"
+repository = "https://github.com/g-s-k/berts/tree/master/db"
 readme = "./README.md"
 license = "MIT"
 
